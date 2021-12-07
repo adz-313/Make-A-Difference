@@ -13,7 +13,6 @@ const FundraiserCard = ({fundraiser}) => {
     const [ description, setDescription ] = useState(null)
     const [ totalDonations, setTotalDonations ] = useState(null)
     const [ imageURL, setImageURL ] = useState(null)
-    const [ url, setURL ] = useState(null)
     const [ beneficiary, setNewBeneficiary ] = useState('')
 
     const init = async (fundraiser) => {
@@ -30,12 +29,10 @@ const FundraiserCard = ({fundraiser}) => {
             const name = await instance.methods.name().call()
             const description = await instance.methods.description().call()
             const imageURL = await instance.methods.imageURL().call()
-            const url = await instance.methods.url().call()
                 
             setFundname(name)
             setDescription(description)
             setImageURL(imageURL)
-            setURL(url)
           }
         catch(error) {
         alert(
@@ -58,7 +55,7 @@ const FundraiserCard = ({fundraiser}) => {
                 <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
             </CardContent>
             <CardActions disableSpacing>
-                <Button href={url} color="primary" variant="text">Visit</Button>
+                <Button color="primary" variant="text">Visit</Button>
             </CardActions>
         </Card>
     )

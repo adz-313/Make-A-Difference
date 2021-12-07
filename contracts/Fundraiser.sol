@@ -14,7 +14,6 @@ contract Fundraiser is Ownable {
     mapping(address => Donation[]) private _donations;
 
     string public name;
-    string public url;
     string public imageURL;
     string public description;
     address payable public beneficiary;
@@ -26,14 +25,12 @@ contract Fundraiser is Ownable {
 
     constructor(
         string memory _name,
-        string memory _url,
         string memory _imageURL,
         string memory _description,
         address _owner,
         address payable _beneficiary
     ) public {
         name = _name;
-        url = _url;
         imageURL = _imageURL;
         description = _description;
         beneficiary = _beneficiary;

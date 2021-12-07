@@ -9,10 +9,9 @@ contract("FundraiserFactory: development", () => {
 });
 
 contract("FundraiserFactory: createFundraiser", accounts => {
-  const name = "Hiro Miya";
-  const url = "google.com";
+  const name = "Beneficiary Name";
   const imageURL = "https://placekitten.com/600/350";
-  const description = "fuck";
+  const description = "Beneficiary description";
   const beneficiary = accounts[1];
 
   it("increases the fundraisersCount", async () => {
@@ -20,7 +19,6 @@ contract("FundraiserFactory: createFundraiser", accounts => {
     const currentCount = await fundraiserFactory.fundraisersCount();
     await fundraiserFactory.createFundraiser(
       name,
-      url,
       imageURL,
       description,
       beneficiary,
@@ -34,7 +32,6 @@ contract("FundraiserFactory: createFundraiser", accounts => {
     const fundraiserFactory = await FundraiserFactoryContract.deployed();
     const tx = await fundraiserFactory.createFundraiser(
       name,
-      url,
       imageURL,
       description,
       beneficiary,
@@ -46,10 +43,9 @@ contract("FundraiserFactory: createFundraiser", accounts => {
 });
 
 contract("FundraiserFactory: fundraisers", accounts => {
-  const name = "Hiro Miya";
-  const url = "google.com";
+  const name = "Beneficiary Name";
   const imageURL = "https://placekitten.com/600/350";
-  const description = "fuck";
+  const description = "Beneficiary description";
   const beneficiary = accounts[1];
 
   const createFundraiserFactory = async (fundraisersCount) => {
@@ -62,7 +58,6 @@ contract("FundraiserFactory: fundraisers", accounts => {
     for (i = 0;i < count;i++) {
       await factory.createFundraiser(
         `${name} ${i}`,
-        url,
         imageURL,
         description,
         beneficiary,

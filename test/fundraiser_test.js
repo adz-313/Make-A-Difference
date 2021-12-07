@@ -3,7 +3,6 @@ const FundraiserContract = artifacts.require("Fundraiser");
 contract("Fundraiser", accounts => {
   let fundraiser;
   const name =  "Beneficiary Name";
-  const url = "beneficiaryname.org";
   const imageURL = "https://placekitten.com/600/350";
   const description = "Beneficiary description";
   const owner = accounts[0];
@@ -12,7 +11,6 @@ contract("Fundraiser", accounts => {
   beforeEach(async () => {
     fundraiser = await FundraiserContract.new(
       name,
-      url,
       imageURL,
       description,
       owner,
@@ -24,11 +22,6 @@ contract("Fundraiser", accounts => {
     it("gets the beneficiary name", async () => {
       const actual = await fundraiser.name();
       assert.equal(actual, name, "names should match");
-    });
-
-    it("gets the beneficiary url", async () => {
-      const actual = await fundraiser.url();
-      assert.equal(actual, url, "url should match");
     });
 
     it("gets the beneficiary image url", async () => {

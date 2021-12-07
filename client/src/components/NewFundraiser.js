@@ -17,6 +17,8 @@ const NewFundraiser = () => {
           deployedNetwork && deployedNetwork.address,
         );
 
+        console.log(networkId)
+
         setContract(instance)
         setAccounts(accounts)
 
@@ -31,7 +33,6 @@ const NewFundraiser = () => {
   }, []);
 
   const [ name, setFundraiserName ] = useState(null)
-  const [ website, setFundraiserWebsite ] = useState(null)
   const [ description, setFundraiserDescription ] = useState(null)
   const [ image, setImage ] = useState(null)
   const [ address, setAddress ] = useState(null)
@@ -41,12 +42,10 @@ const NewFundraiser = () => {
   const handleSubmit = async () => {
     console.log('safgsf')
     const imageURL = image;
-    const url = website;
     const beneficiary = address;
 
     await contract.methods.createFundraiser(
       name,
-      url,
       imageURL,
       description,
       beneficiary
@@ -57,7 +56,14 @@ const NewFundraiser = () => {
 
   return (
     <Grid container direction="row" marginTop="1rem">
-      <Grid direction="column" justifyContent="start" container xs={12} md={8} padding="10px">
+      <Grid direction="column" justifyContent="start" container xs={12} md={4} padding="10px">
+        <Typography variant="h6" marginBottom="10px" alignSelf="center">What it is</Typography>
+        <Typography variant="body1">1. Make A Difference is a new and improved fundraising app.</Typography>
+        <Typography variant="body1">2. Using blockchain, it successfully eliminates any middle man so your money reaches the needy directly.</Typography>
+        <Typography variant="body1">3. You get real time data of how the funds raised are being used.</Typography>
+        <Typography variant="body1">4. The funds generated are also stored securely and cannot be stolen by anyone. </Typography>
+      </Grid>
+      <Grid direction="column" justifyContent="start" container xs={12} md={4} padding="10px">
         <Typography variant="h6" marginBottom="10px" alignSelf="center">How it works</Typography>
         <Typography variant="body1">1. Sign in to your Metamask Wallet.</Typography>
         <Typography variant="body1">2. Select fundraiser to donate to. </Typography>
@@ -67,7 +73,6 @@ const NewFundraiser = () => {
       <Grid direction="column" justifyContent="space-evenly" minHeight="50vh" padding="0 2rem" container xs={12} md={4} >
         <Typography variant="h6" alignSelf="center">Create A New Fundraiser</Typography>
         <TextField onChange={(e) => setFundraiserName(e.target.value)} label="Name" size="small" />
-        <TextField onChange={(e) => setFundraiserWebsite(e.target.value)} label="Website" size="small" />
         <TextField onChange={(e) => setImage(e.target.value)} label="Image URL" size="small" />
         <TextField onChange={(e) => setFundraiserDescription(e.target.value)} label="Description" size="small" />
         <TextField onChange={(e) => setAddress(e.target.value)} label="Beneficiary" size="small" />

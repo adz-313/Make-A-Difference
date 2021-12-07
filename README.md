@@ -1,3 +1,9 @@
 # Make-A-Difference
+A decentralized fundraising application.
 
-## Idhar koi to description add krdo 👉👉
+## How to run
+1. In main directory, run `truffle compile`
+2. If Openzeppelin contracts are not found, install them using `npm install @openzeppelin/contracts`
+3. If compilation is successful, migrate contracts onto blockchain using `truffle migrate`
+4. Optionally, you can test the smart contracts using `truffle test`
+5. In client directory, install dependencies using `npm i` and run the react code on development server using `npm start`
