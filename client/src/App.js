@@ -3,17 +3,72 @@ import FactoryContract from "./contracts/FundraiserFactory.json";
 import getWeb3 from "./getWeb3";
 import Web3 from 'web3'
 
-import Typography from '@mui/material/Typography';
-import NewFundraiser from './components/NewFundraiser';
-import FundraiserCard from './components/FundraiserCard';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+import NewFundraiser from './components/NewFundraiser/NewFundraiser';
+import ActiveFundraisers from './components/ActiveFundraisers/ActiveFundraisers';
 
 const App = () => {
   const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'))
   const [instance, setInstance] = useState(null);
   const [fundraisers, setFundraisers] = useState([]);
+  const [fundraiser, setFundraiser] = useState({
+    name: '',
+    imageUrl: '',
+    description: '',
+    beneficiary: ''
+  })
+  const [ accounts, setAccounts ] = useState(null);
 
-  const getFUndraisers = async () => {
+  useEffect(() => {
+    const init = async() => {
+      try {
+        // Get network provider and web3 instance.
+        const web3 = await getWeb3();
+        // Use web3 to get the user's accounts.
+        const accounts = await web3.eth.getAccounts();
+        console.log(accounts);
+
+        // Get the contract instance.
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = FactoryContract.networks[networkId];
+        const instance = new web3.eth.Contract(
+          FactoryContract.abi,
+          deployedNetwork && deployedNetwork.address,
+        );
+
+        // Set web3, accounts, and contract to the state, and then proceed with an
+        setInstance(instance);
+        setAccounts(accounts);
+
+      } catch(error) {
+        // Catch any errors for any of the above operations.
+        alert(
+          `Failed to load web3, accounts, or contract. Check console for details.`,
+        );
+        console.error(error);
+      }
+    }
+    init();
+  }, []);
+
+  
+
+  const createFundraiser = async () => {
+    await instance.methods.createFundraiser(
+      fundraiser.name,
+      fundraiser.imageUrl,
+      fundraiser.description,
+      fundraiser.beneficiary
+    ).send({ from: accounts[0] })
+
+    alert('Successfully created fundraiser')
+  }
+
+  useEffect(() => {
+    getFundraisers();
+  },[createFundraiser])
+
+  const getFundraisers = async () => {
     try {
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = FactoryContract.networks[networkId];
@@ -35,57 +90,14 @@ const App = () => {
     }
   }
 
-  useEffect(() => {
-    const init = async() => {
-      try {
-        // Get network provider and web3 instance.
-        const web3 = await getWeb3();
-        // Use web3 to get the user's accounts.
-        const accounts = await web3.eth.getAccounts();
-        console.log(accounts);
-
-        // Get the contract instance.
-        const networkId = await web3.eth.net.getId();
-        const deployedNetwork = FactoryContract.networks[networkId];
-        const instance = new web3.eth.Contract(
-          FactoryContract.abi,
-          deployedNetwork && deployedNetwork.address,
-        );
-
-        // Set web3, accounts, and contract to the state, and then proceed with an
-        setInstance(instance);
-
-        getFUndraisers();
-
-      } catch(error) {
-        // Catch any errors for any of the above operations.
-        alert(
-          `Failed to load web3, accounts, or contract. Check console for details.`,
-        );
-        console.error(error);
-      }
-    }
-    init();
-  }, []);
-
   return (
-    <Grid container>
-      <Typography variant="h3">Make A Difference</Typography>
-      <NewFundraiser />
-      <Typography variant="h5" margin="1rem 1rem">Active Fundraisers</Typography>
-      <Grid container spacing={3}>
-      {
-        fundraisers.map((fundraiser) => {
-          return (
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-              <FundraiserCard fundraiser={fundraiser} />
-            </Grid>
-          )
-        })
-      }
+    <>
+      <Grid container>
+        <Typography variant="h3">Make A Difference</Typography>
+        <NewFundraiser fundraiser={fundraiser} setFundraiser={setFundraiser} createFundraiser={createFundraiser} />
       </Grid>
-      
-    </Grid>
+      <ActiveFundraisers fundraisers={fundraisers} />
+    </>
   )
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import FundraiserContract from "../contracts/Fundraiser.json";
+import FundraiserContract from "../../../contracts/Fundraiser.json";
 import Web3 from 'web3';
 import { Chip, Menu, MenuItem, Card, CardActions, CardMedia, Button, Typography, CardContent, Avatar, CardHeader, IconButton } from '@mui/material'
 
