@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Typography, Button, Grid, TextField } from "@mui/material";
 
 const NewFundraiser = ({ fundraiser, setFundraiser, createFundraiser }) => {
@@ -21,10 +21,10 @@ const NewFundraiser = ({ fundraiser, setFundraiser, createFundraiser }) => {
       </Grid>
       <Grid direction="column" justifyContent="space-evenly" minHeight="50vh" padding="0 2rem" container xs={12} md={4} >
         <Typography variant="h6" alignSelf="center">Create A New Fundraiser</Typography>
-        <TextField onChange={(e) => setFundraiser({ ...fundraiser, name: e.target.value })} label="Name" size="small" />
-        <TextField onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
-        <TextField onChange={(e) => setFundraiser({ ...fundraiser, description: e.target.value })} label="Description" size="small" />
-        <TextField onChange={(e) => setFundraiser({ ...fundraiser, beneficiary: e.target.value })} label="Beneficiary" size="small" />
+        <TextField value={fundraiser.name} onChange={(e) => setFundraiser({ ...fundraiser, name: e.target.value })} label="Name" size="small" />
+        <TextField value={fundraiser.imageUrl} onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
+        <TextField value={fundraiser.description} onChange={(e) => setFundraiser({ ...fundraiser, description: e.target.value })} label="Description" size="small" />
+        <TextField value={fundraiser.beneficiary} onChange={(e) => setFundraiser({ ...fundraiser, beneficiary: e.target.value })} label="Beneficiary" size="small" />
         <Button variant="outlined" onClick={() => createFundraiser()}>Submit</Button>
       </Grid>
     </Grid>

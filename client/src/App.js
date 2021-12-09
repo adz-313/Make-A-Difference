@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Switch, Route } from "react-router-dom"
+import { Typography } from '@mui/material';
+import FundraiserPage from './components/FundraiserPage/FundraiserPage';
+import Home from './components/Home/Home';
+
 import FactoryContract from "./contracts/FundraiserFactory.json";
 import getWeb3 from "./getWeb3";
-import Web3 from 'web3'
-
-import { Grid, Typography } from '@mui/material';
-import NewFundraiser from './components/NewFundraiser/NewFundraiser';
-import ActiveFundraisers from './components/ActiveFundraisers/ActiveFundraisers';
+import Web3 from 'web3';
 
 const App = () => {
   const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'))
+
   const [instance, setInstance] = useState(null);
-  const [fundraisers, setFundraisers] = useState([]);
-  const [fundraiser, setFundraiser] = useState({
-    name: '',
-    imageUrl: '',
-    description: '',
-    beneficiary: ''
-  })
   const [ accounts, setAccounts ] = useState(null);
+  const [fundraisers, setFundraisers] = useState([]);
 
   useEffect(() => {
     const init = async() => {
@@ -40,6 +36,8 @@ const App = () => {
         setInstance(instance);
         setAccounts(accounts);
 
+        getFundraisers(instance);
+
       } catch(error) {
         // Catch any errors for any of the above operations.
         alert(
@@ -49,54 +47,25 @@ const App = () => {
       }
     }
     init();
+    
   }, []);
 
-  
-
-  const createFundraiser = async () => {
-    await instance.methods.createFundraiser(
-      fundraiser.name,
-      fundraiser.imageUrl,
-      fundraiser.description,
-      fundraiser.beneficiary
-    ).send({ from: accounts[0] })
-
-    alert('Successfully created fundraiser')
-  }
-
-  useEffect(() => {
-    getFundraisers();
-  },[createFundraiser])
-
-  const getFundraisers = async () => {
+  const getFundraisers = async (instance) => {
     try {
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = FactoryContract.networks[networkId];
-      const accounts = await web3.eth.getAccounts();
-      const instance = new web3.eth.Contract(
-        FactoryContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-
-      const funds = await instance.methods.fundraisers(10, 0).call()
-        
-      setFundraisers(funds)
-    }
-    catch(error) {
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
+      const funds = await instance.methods.fundraisers(10, 0).call();
+      setFundraisers(funds);
+    } catch (error) {
+      alert(error)
     }
   }
 
-  return (
+   return (
     <>
-      <Grid container>
-        <Typography variant="h3">Make A Difference</Typography>
-        <NewFundraiser fundraiser={fundraiser} setFundraiser={setFundraiser} createFundraiser={createFundraiser} />
-      </Grid>
-      <ActiveFundraisers fundraisers={fundraisers} />
+      <Typography variant="h3">Make A Difference</Typography>
+      <Switch>
+        <Route path="/" exact component={() => <Home myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />  
+				<Route path="/fundraiser/:id" exact component={FundraiserPage} />
+			</Switch>
     </>
   )
 }

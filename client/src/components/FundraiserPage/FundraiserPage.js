@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import FundraiserContract from "../../../contracts/Fundraiser.json";
+import FundraiserContract from "../../contracts/Fundraiser.json";
 import Web3 from 'web3';
-import { Card, CardActions, CardMedia, Button, Typography, CardContent } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Typography } from '@mui/material';
 
-const FundraiserCard = ({fundraiser}) => {
+import { useParams } from 'react-router-dom';
+
+const FundraiserPage = () => {
     const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'))
+
+    const params = useParams();
 
     const [ address, setAddress] = useState(null)
     const [ fundName, setFundname ] = useState(null)
@@ -19,15 +22,15 @@ const FundraiserCard = ({fundraiser}) => {
                 fundraiser
             );
             
-            setAddress(instance._address);
 
             const name = await instance.methods.name().call()
             const description = await instance.methods.description().call()
             const imageURL = await instance.methods.imageURL().call()
-                
+
             setFundname(name)
             setDescription(description)
             setImageURL(imageURL)
+
           }
         catch(error) {
         alert(
@@ -38,22 +41,16 @@ const FundraiserCard = ({fundraiser}) => {
     }
 
     useEffect(() => {
-        if(fundraiser) init(fundraiser)
+        if(params.id) init(params.id)
     },[])
 
     return (
-        <Card>
-            <CardMedia component="img" height="300" src={imageURL} />
-            {/* <img src={imageURL} height='300px' /> */}
-            <CardContent>
-                <Typography variant="h6">{fundName}</Typography>
-                <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
-            </CardContent>
-            <CardActions disableSpacing>
-                <Button color="primary" variant="text" component={Link} to={`/fundraiser/${address}`}>Visit</Button>
-            </CardActions>
-        </Card>
+        <div>
+            <h1>Hello</h1>
+            <Typography variant="h6">{fundName}</Typography>
+            <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
+        </div>
     )
 }
 
-export default FundraiserCard
+export default FundraiserPage
