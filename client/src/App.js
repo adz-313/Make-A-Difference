@@ -18,8 +18,10 @@ const App = () => {
   useEffect(() => {
     const init = async() => {
       try {
+
         // Get network provider and web3 instance.
         const web3 = await getWeb3();
+
         // Use web3 to get the user's accounts.
         const accounts = await web3.eth.getAccounts();
         console.log(accounts);
@@ -40,15 +42,21 @@ const App = () => {
 
       } catch(error) {
         // Catch any errors for any of the above operations.
-        alert(
-          `Failed to load web3, accounts, or contract. Check console for details.`,
-        );
+        alert(`Failed to load web3, accounts, or contract. Check console for details.`,);
         console.error(error);
       }
     }
     init();
     
   }, []);
+
+  // useEffect(() => {
+  //   window.location.reload();
+  // },[])
+
+  window.ethereum.on('accountsChanged', function (accounts) {
+    window.location.reload()
+  })
 
   const getFundraisers = async (instance) => {
     try {

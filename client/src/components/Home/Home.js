@@ -43,7 +43,7 @@ const Home = ({ myinstance, myaccounts, myfundraisers, getFundraisers }) => {
 
   return (
     <>
-        <NewFundraiser fundraiser={fundraiser} setFundraiser={setFundraiser} createFundraiser={createFundraiser} />
+        <NewFundraiser accounts={accounts} fundraiser={fundraiser} setFundraiser={setFundraiser} createFundraiser={createFundraiser} />
         <ActiveFundraisers fundraisers={fundraisers} />
     </>
   )

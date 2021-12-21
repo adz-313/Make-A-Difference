@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography, Button, Grid, TextField } from "@mui/material";
 
-const NewFundraiser = ({ fundraiser, setFundraiser, createFundraiser }) => {
+const NewFundraiser = ({ accounts, fundraiser, setFundraiser, createFundraiser }) => {
 
   return (
     <Grid container direction="row" marginTop="1rem">
@@ -18,6 +18,7 @@ const NewFundraiser = ({ fundraiser, setFundraiser, createFundraiser }) => {
         <Typography variant="body1">2. Select fundraiser to donate to. </Typography>
         <Typography variant="body1">3. Enter amount of donation.</Typography>
         <Typography variant="body1">4. Confirm through Metamask Wallet.</Typography>
+        <Typography variant="body1">Current Account: {accounts}</Typography>
       </Grid>
       <Grid direction="column" justifyContent="space-evenly" minHeight="50vh" padding="0 2rem" container xs={12} md={4} >
         <Typography variant="h6" alignSelf="center">Create A New Fundraiser</Typography>
