@@ -4,8 +4,7 @@ import Web3 from 'web3';
 import { Card, CardActions, CardMedia, Button, Typography, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const FundraiserCard = ({fundraiser}) => {
-    const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'))
+const FundraiserCard = ({web3, fundraiser}) => {
 
     const [ address, setAddress] = useState(null)
     const [ fundName, setFundname ] = useState(null)
@@ -47,7 +46,7 @@ const FundraiserCard = ({fundraiser}) => {
             {/* <img src={imageURL} height='300px' /> */}
             <CardContent>
                 <Typography variant="h6">{fundName}</Typography>
-                <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
+                <Typography variant="body2" color="textSecondary" component="p">{ description ? description.substr(0, 150) + `... Read more` : 'Loading...' }</Typography>
             </CardContent>
             <CardActions disableSpacing>
                 <Button color="primary" variant="text" component={Link} to={`/fundraiser/${address}`}>Visit</Button>

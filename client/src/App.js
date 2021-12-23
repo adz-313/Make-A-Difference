@@ -6,14 +6,12 @@ import Home from './components/Home/Home';
 
 import FactoryContract from "./contracts/FundraiserFactory.json";
 import getWeb3 from "./getWeb3";
-import Web3 from 'web3';
 
 const App = () => {
-  const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'))
-
   const [instance, setInstance] = useState(null);
   const [ accounts, setAccounts ] = useState(null);
   const [fundraisers, setFundraisers] = useState([]);
+  const [ web3, setWeb3 ] = useState(null);
 
   useEffect(() => {
     const init = async() => {
@@ -21,6 +19,7 @@ const App = () => {
 
         // Get network provider and web3 instance.
         const web3 = await getWeb3();
+        setWeb3(web3);
 
         // Use web3 to get the user's accounts.
         const accounts = await web3.eth.getAccounts();
@@ -50,10 +49,6 @@ const App = () => {
     
   }, []);
 
-  // useEffect(() => {
-  //   window.location.reload();
-  // },[])
-
   window.ethereum.on('accountsChanged', function (accounts) {
     window.location.reload()
   })
@@ -71,8 +66,8 @@ const App = () => {
     <>
       <Typography variant="h3">Make A Difference</Typography>
       <Switch>
-        <Route path="/" exact component={() => <Home myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />  
-				<Route path="/fundraiser/:id" exact component={FundraiserPage} />
+        <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />  
+				<Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
 			</Switch>
     </>
   )
