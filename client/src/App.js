@@ -11,6 +11,7 @@ import { useDarkMode } from './Hooks/useDarkMode';
 import { MuiThemeProvider } from '@material-ui/core';
 import Navbar from './components/Navbar/Navbar';
 import { dark, light } from './constants/theme';
+import HomePage from './components/HomePage/HomePage';
 
 const App = () => {
   const [instance, setInstance] = useState(null);
@@ -84,11 +85,11 @@ const App = () => {
       <MuiThemeProvider theme={themeMode}>
         <CssBaseline />
         <Navbar theme={theme} toggleTheme={toggleTheme}/>
-        <Typography variant="h3">Make A Difference</Typography>
         <Container>
           <Switch>
-            <Route path="/campaign/new" exact component={() => <CreateCampaign />} />
-            <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />  
+            <Route path="/campaign/new" exact component={() => <CreateCampaign web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
+            {/* <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />   */}
+            <Route path="/" exact component={() => <HomePage web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
             <Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
           </Switch>
         </Container>

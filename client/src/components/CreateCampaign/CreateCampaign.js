@@ -11,7 +11,7 @@ const initialState = {
     beneficiary: ''
 }
 
-const CreateCampaign = () => {
+const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers }) => {
 
     const classes = useStyles();
 
@@ -44,6 +44,8 @@ const CreateCampaign = () => {
                         variant="outlined"
                         margin="normal"
                         required
+                        multiline
+                        rows={4}
                         fullWidth
                         name="description"
                         label="Campaign Description"
@@ -60,6 +62,17 @@ const CreateCampaign = () => {
                         id="imageUrl"
                         onChange={handleChange}
                     />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="beneficiary"
+                        label="Beneficiary"
+                        id="beneficiary"
+                        onChange={handleChange}
+                    />
+
                     <Button
                         type="submit"
                         fullWidth
