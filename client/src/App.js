@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route } from "react-router-dom"
-import { Typography } from '@mui/material';
+import { Container, CssBaseline, Typography } from '@mui/material';
 import FundraiserPage from './components/FundraiserPage/FundraiserPage';
 import Home from './components/Home/Home';
+import CreateCampaign from './components/CreateCampaign/CreateCampaign';
 
 import FactoryContract from "./contracts/FundraiserFactory.json";
 import getWeb3 from "./getWeb3";
+import { useDarkMode } from './Hooks/useDarkMode';
+import { MuiThemeProvider } from '@material-ui/core';
+import Navbar from './components/Navbar/Navbar';
+import { dark, light } from './constants/theme';
 
 const App = () => {
   const [instance, setInstance] = useState(null);
   const [ accounts, setAccounts ] = useState(null);
   const [fundraisers, setFundraisers] = useState([]);
   const [ web3, setWeb3 ] = useState(null);
+
+
+  const [theme, toggleTheme, componentMounted] = useDarkMode();
+
+  const themeMode = theme === 'light' ? light : dark;
 
   useEffect(() => {
     const init = async() => {
@@ -49,6 +59,7 @@ const App = () => {
     
   }, []);
 
+
   window.ethereum.on('accountsChanged', function (accounts) {
     window.location.reload()
   })
@@ -62,13 +73,26 @@ const App = () => {
     }
   }
 
+
+    // Warning: If any hook is defined under this, it will give error: React Hook "useLocation" is called conditionally
+    if(!componentMounted) {
+      return <div />
+    };
+
    return (
     <>
-      <Typography variant="h3">Make A Difference</Typography>
-      <Switch>
-        <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />  
-				<Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
-			</Switch>
+      <MuiThemeProvider theme={themeMode}>
+        <CssBaseline />
+        <Navbar theme={theme} toggleTheme={toggleTheme}/>
+        <Typography variant="h3">Make A Difference</Typography>
+        <Container>
+          <Switch>
+            <Route path="/campaign/new" exact component={() => <CreateCampaign />} />
+            <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />  
+            <Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
+          </Switch>
+        </Container>
+      </MuiThemeProvider>
     </>
   )
 }
