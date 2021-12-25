@@ -43,7 +43,7 @@ const FundraiserPage = ({ web3 }) => {
             setFundname(name);
             setDescription(description);
             setImageURL(imageURL);
-            console.log(instance)
+            
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
@@ -68,12 +68,13 @@ const FundraiserPage = ({ web3 }) => {
 
     const donate = async () => {
         const ethTotal = donationAmount/ exchangeRate[currency];
-        const donation = web3.utils.toWei(ethTotal.toFixed(15).toString())
+        const donation = web3.utils.toWei(ethTotal.toFixed(18).toString())
         await instance.methods.donate().send({
             from: accounts[0],
             value: donation,
             gas: 650000
         })
+        console.log(ethTotal, donation ,totalDonations)
     }
 
     const withdrawalFunds = async () => {
@@ -94,7 +95,7 @@ const FundraiserPage = ({ web3 }) => {
                 <Grid md={6} lg={8}>
                     <Typography variant="h3">{fundName}</Typography>
                     <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
-                    <Typography variant="h5" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                    <Typography variant="h5" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
                 </Grid>
             </Grid>
             <TextField sx={{mt: 3}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
