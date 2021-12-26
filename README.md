@@ -8,5 +8,5 @@ A decentralized fundraising application.
 4. Optionally, you can test the smart contracts using `truffle test`
 5. In client directory, install dependencies using `npm i` and run the react code on development server using `npm start`
 
-## How to run
+## Common Errors
 1. Smart Contract Error: Returned values aren't valid, did it run Out of Gas? Run `truffle migrate --reset`
