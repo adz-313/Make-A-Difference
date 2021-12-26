@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Switch, Route } from "react-router-dom"
-import { Typography } from '@mui/material';
+import { Typography} from '@mui/material';
 import FundraiserPage from './components/FundraiserPage/FundraiserPage';
 import Home from './components/Home/Home';
 
 import FactoryContract from "./contracts/FundraiserFactory.json";
 import getWeb3 from "./getWeb3";
+
 
 const App = () => {
   const [instance, setInstance] = useState(null);
