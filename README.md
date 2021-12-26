@@ -10,3 +10,7 @@ A decentralized fundraising application.
 
 ## Common Errors
 1. Smart Contract Error: Returned values aren't valid, did it run Out of Gas? Run `truffle migrate --reset`
+
+## Todos
+- [ ] Shift `createFundraiser()` to NewFundraiser component
+- [ ] Shift `getFundraiser()` and `init()` from App to Home component
