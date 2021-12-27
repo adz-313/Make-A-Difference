@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import FundraiserContract from "../../../contracts/Fundraiser.json";
-import Web3 from 'web3';
+import getWeb3 from "../../../getWeb3";
 import { Card, CardActions, CardMedia, Button, Typography, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
+import Web3 from 'web3'
 
-const FundraiserCard = ({web3, fundraiser}) => {
+const FundraiserCard = ({fundraiser}) => {
 
     const [ address, setAddress] = useState(null)
     const [ fundName, setFundname ] = useState(null)
@@ -13,6 +14,9 @@ const FundraiserCard = ({web3, fundraiser}) => {
 
     const init = async (fundraiser) => {
         try {
+            console.log(fundraiser)
+            const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'))
+            console.log(web3)
             const instance = new web3.eth.Contract(
                 FundraiserContract.abi,
                 fundraiser
@@ -25,6 +29,7 @@ const FundraiserCard = ({web3, fundraiser}) => {
             const imageURL = await instance.methods.imageURL().call()
                 
             setFundname(name)
+            console.log(name)
             setDescription(description)
             setImageURL(imageURL)
           }
