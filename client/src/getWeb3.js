@@ -6,13 +6,13 @@ const getWeb3 = () =>
     window.addEventListener("load", async () => {
       // Modern dapp browsers...
       if (window.ethereum) {
-        console.log("sup");
         const web3 = new Web3(window.ethereum);
         try {
           // Request account access if needed
           await window.ethereum.enable();
           // Accounts now exposed
           resolve(web3);
+          console.log('fsgasfa')
         } catch (error) {
           reject(error);
         }

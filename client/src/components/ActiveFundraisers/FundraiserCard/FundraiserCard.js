@@ -14,9 +14,8 @@ const FundraiserCard = ({fundraiser}) => {
 
     const init = async (fundraiser) => {
         try {
-            console.log(fundraiser)
             const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'))
-            console.log(web3)
+            
             const instance = new web3.eth.Contract(
                 FundraiserContract.abi,
                 fundraiser

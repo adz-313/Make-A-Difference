@@ -7,9 +7,11 @@ import { useParams } from 'react-router-dom';
 import getWeb3 from '../../getWeb3';
 const cc = require('cryptocompare');
 
-const FundraiserPage = ({ web3 }) => {
+const FundraiserPage = () => {
     const params = useParams();
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [web3, setWeb3] = useState(null);
     const [ instance, setInstance] = useState(null);
     const [ address, setAddress] = useState(null);
     const [ fundName, setFundname ] = useState(null);
@@ -24,6 +26,10 @@ const FundraiserPage = ({ web3 }) => {
 
     const init = async (fundraiser) => {
         try {
+            console.log('yolo')
+            const web3 = new Web3(window.ethereum);
+            setWeb3(web3);
+
             const instance = new web3.eth.Contract(
                 FundraiserContract.abi,
                 fundraiser
@@ -39,6 +45,7 @@ const FundraiserPage = ({ web3 }) => {
             
             setExchangeRate(exchangeRate);
             setAccounts(accounts);
+            console.log(accounts)
             setInstance(instance);
             setFundname(name);
             setDescription(description);
@@ -63,8 +70,11 @@ const FundraiserPage = ({ web3 }) => {
     }
 
     useEffect(() => {
-        if(web3 && params.id) init(params.id)
-    },[])
+        if(params.id) {
+            init(params.id)
+            .then(() => setIsLoading(false));
+        }
+    },[params])
 
     const donate = async () => {
         const ethTotal = donationAmount/ exchangeRate[currency];
@@ -85,6 +95,8 @@ const FundraiserPage = ({ web3 }) => {
         console.log(x)
         alert(`Funds Withdrawn!`)
     }
+
+    if(isLoading) return <p>Loading...</p>
 
     return (
         <div>
