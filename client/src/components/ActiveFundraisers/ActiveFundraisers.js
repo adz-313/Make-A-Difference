@@ -10,7 +10,7 @@ const ActiveFundraisers = ({ web3, fundraisers }) => {
             {
                 fundraisers.map((fundraiser) => {
                 return (
-                    <Grid key={fundraiser} item xs={12} sm={6} md={4} lg={3}>
+                    <Grid key={fundraiser} item xs={12} sm={6} md={4} lg={12}>
                         <FundraiserCard web3={web3} fundraiser={fundraiser} />
                     </Grid>
                 )

@@ -11,13 +11,18 @@ const HomePage = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers 
 
     const [instance, setInstance] = useState(null);
     const [fundraisers, setFundraisers] = useState([]);
-
+    const [fundraiser, setFundraiser] = useState({
+      name: '',
+      imageUrl: '',
+      description: '',
+      beneficiary: ''
+    })
     const [ accounts, setAccounts ] = useState(null);
-
+  
     useEffect(() => {
-        setInstance(myinstance)
-        setAccounts(myaccounts)
-        setFundraisers(myfundraisers)
+      setInstance(myinstance)
+      setAccounts(myaccounts)
+      setFundraisers(myfundraisers)
     },[])
 
 
@@ -26,7 +31,7 @@ const HomePage = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers 
         <Container>
             <Grid container  className={classes.root} spacing={5} direction="column" alignItems="center">
                 <Grid item xs={12}>
-                    {/* <ActiveFundraisers /> */}
+                    <ActiveFundraisers web3={web3} fundraisers={fundraisers} />
                     <Typography>Active Campaigns</Typography>
                 </Grid>
                 <Grid item xs={12}>
