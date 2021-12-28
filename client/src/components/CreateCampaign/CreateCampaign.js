@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 
 
-import { Container, TextField, Button, Link, Grid, Typography  } from '@material-ui/core';
-import useStyles from './styles';
+import {Container, TextField, Button, Link, Grid, Typography, Box} from '@mui/material'
+
 
 const initialState = {
     name: '',
@@ -13,7 +13,6 @@ const initialState = {
 
 const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers }) => {
 
-    const classes = useStyles();
 
     const [formData, setFormData] = useState(initialState);
     
@@ -23,12 +22,19 @@ const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundra
 
     return (
         <Container component="main" maxWidth="xs">
-            <div className={classes.paper}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    marginTop: '25%'
+                }}
+            >
                 <Typography component="h1" variant="h5">
                     Create Campaign
                 </Typography>
 
-                <form className={classes.form}>
+                <form >
                 <TextField
                         variant="outlined"
                         margin="normal"
@@ -37,6 +43,7 @@ const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundra
                         id="name"
                         label="Campaign Name"
                         name="name"
+                        value={formData.name}
                         autoFocus
                         onChange={handleChange}
                     />
@@ -48,6 +55,7 @@ const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundra
                         rows={4}
                         fullWidth
                         name="description"
+                        value={formData.description}
                         label="Campaign Description"
                         id="description"
                         onChange={handleChange}
@@ -60,6 +68,7 @@ const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundra
                         name="imageUrl"
                         label="Image URL"
                         id="imageUrl"
+                        value={formData.imageUrl}
                         onChange={handleChange}
                     />
                     <TextField
@@ -70,6 +79,7 @@ const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundra
                         name="beneficiary"
                         label="Beneficiary"
                         id="beneficiary"
+                        value={formData.beneficiary}
                         onChange={handleChange}
                     />
 
@@ -78,14 +88,13 @@ const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundra
                         fullWidth
                         variant="contained"
                         color="primary"
-                        className={classes.submit}
+                       
                     >
                         Submit
                     </Button>
 
                 </form>
-
-            </div>
+            </Box>
         </Container>
     )
 }

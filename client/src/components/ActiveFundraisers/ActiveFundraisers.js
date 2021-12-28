@@ -6,11 +6,11 @@ const ActiveFundraisers = ({ web3, fundraisers }) => {
     return (
         <div>
             <Typography variant="h5" margin="1rem 1rem">Active Fundraisers</Typography>
-            <Grid container spacing={3}>
+            <Grid container justifyContent="center"  spacing={3}>
             {
                 fundraisers.map((fundraiser) => {
                 return (
-                    <Grid key={fundraiser} item xs={12} sm={6} md={4} lg={12}>
+                    <Grid key={fundraiser} item xs={12} sm={6} md={4}>
                         <FundraiserCard web3={web3} fundraiser={fundraiser} />
                     </Grid>
                 )

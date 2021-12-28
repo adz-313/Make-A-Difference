@@ -12,6 +12,7 @@ import { MuiThemeProvider } from '@material-ui/core';
 import Navbar from './components/Navbar/Navbar';
 import { dark, light } from './constants/theme';
 import HomePage from './components/HomePage/HomePage';
+import  WithDrawalRequest from './components/WithDrawals/WithDrawalRequest';
 
 const App = () => {
   const [instance, setInstance] = useState(null);
@@ -88,9 +89,10 @@ const App = () => {
         <Container>
           <Switch>
             <Route path="/campaign/new" exact component={() => <CreateCampaign web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
-            {/* <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />   */}
-            <Route path="/" exact component={() => <HomePage web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
+            <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
+            <Route path="/home" exact component={() => <HomePage web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
             <Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
+            <Route path="/withdrawal/request" exact component={WithDrawalRequest} />
           </Switch>
         </Container>
       </MuiThemeProvider>
