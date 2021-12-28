@@ -12,7 +12,6 @@ const getWeb3 = () =>
           await window.ethereum.enable();
           // Accounts now exposed
           resolve(web3);
-          console.log('fsgasfa')
         } catch (error) {
           reject(error);
         }

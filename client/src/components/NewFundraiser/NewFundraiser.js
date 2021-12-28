@@ -1,7 +1,62 @@
-import React from "react";
+import React,{useState, useEffect} from "react";
 import { Typography, Button, Grid, TextField } from "@mui/material";
+import FactoryContract from "../../contracts/FundraiserFactory.json";
 
-const NewFundraiser = ({ accounts, fundraiser, setFundraiser, createFundraiser }) => {
+const NewFundraiser = ({ web3 }) => {
+  const [instance, setInstance] = useState(null);
+  const [fundraiser, setFundraiser] = useState({
+    name: '',
+    imageUrl: '',
+    description: '',
+    beneficiary: ''
+  })
+  const [ accounts, setAccounts ] = useState(null);
+
+
+  useEffect(() => {
+    const init = async() => {
+      try {
+        const accounts = await web3.eth.getAccounts();
+
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = FactoryContract.networks[networkId];
+        const instance = new web3.eth.Contract(
+          FactoryContract.abi,
+          deployedNetwork && deployedNetwork.address,
+        );
+
+        setInstance(instance);
+        setAccounts(accounts);
+
+      } catch(error) {
+        alert(`Failed to load web3, accounts, or contract. Check console for details.`,);
+        console.error(error);
+      }
+    }
+    if(web3) init();
+    
+  }, []);
+
+  const clear = () => {
+    setFundraiser({
+      name: '',
+      imageUrl: '',
+      description: '',
+      beneficiary: ''
+    });
+  }
+
+  const createFundraiser = async () => {
+    await instance.methods.createFundraiser(
+      fundraiser.name,
+      fundraiser.imageUrl,
+      fundraiser.description,
+      fundraiser.beneficiary
+    ).send({ from: accounts[0] })
+
+    alert('Successfully created fundraiser')
+    clear()
+  }
 
   return (
     <Grid container direction="row" marginTop="1rem" minHeight="90vh">

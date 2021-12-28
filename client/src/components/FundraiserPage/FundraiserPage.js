@@ -4,14 +4,12 @@ import Web3 from 'web3';
 import { Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
-import getWeb3 from '../../getWeb3';
 const cc = require('cryptocompare');
 
-const FundraiserPage = () => {
+const FundraiserPage = ({ web3 }) => {
     const params = useParams();
 
     const [isLoading, setIsLoading] = useState(true);
-    const [web3, setWeb3] = useState(null);
     const [ instance, setInstance] = useState(null);
     const [ address, setAddress] = useState(null);
     const [ fundName, setFundname ] = useState(null);
@@ -26,10 +24,6 @@ const FundraiserPage = () => {
 
     const init = async (fundraiser) => {
         try {
-            console.log('yolo')
-            const web3 = new Web3(window.ethereum);
-            setWeb3(web3);
-
             const instance = new web3.eth.Contract(
                 FundraiserContract.abi,
                 fundraiser
@@ -70,11 +64,11 @@ const FundraiserPage = () => {
     }
 
     useEffect(() => {
-        if(params.id) {
+        if(params.id && web3) {
             init(params.id)
-            .then(() => setIsLoading(false));
+            setIsLoading(false);
         }
-    },[params])
+    },[])
 
     const donate = async () => {
         const ethTotal = donationAmount/ exchangeRate[currency];
