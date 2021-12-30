@@ -8,8 +8,10 @@ const NewFundraiser = ({ web3 }) => {
     name: '',
     imageUrl: '',
     description: '',
+    // minimumContribution: '',
+    targetAmount: '',
     beneficiary: ''
-  })
+  });
   const [ accounts, setAccounts ] = useState(null);
 
 
@@ -42,6 +44,8 @@ const NewFundraiser = ({ web3 }) => {
       name: '',
       imageUrl: '',
       description: '',
+      // minimumContribution: '',
+      targetAmount: '',
       beneficiary: ''
     });
   }
@@ -51,6 +55,8 @@ const NewFundraiser = ({ web3 }) => {
       fundraiser.name,
       fundraiser.imageUrl,
       fundraiser.description,
+      // fundraiser.minimumContribution,
+      fundraiser.targetAmount,
       fundraiser.beneficiary
     ).send({ from: accounts[0] })
 
@@ -79,6 +85,8 @@ const NewFundraiser = ({ web3 }) => {
         <Typography variant="h6" alignSelf="center">Create A New Fundraiser</Typography>
         <TextField value={fundraiser.name} onChange={(e) => setFundraiser({ ...fundraiser, name: e.target.value })} label="Name" size="small" />
         <TextField value={fundraiser.imageUrl} onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
+        {/* <TextField value={fundraiser.minimumContribution} onChange={(e) => setFundraiser({ ...fundraiser, minimumContribution: e.target.value })} label="Minimum Contribution" size="small" /> */}
+        <TextField value={fundraiser.targetAmount} onChange={(e) => setFundraiser({ ...fundraiser, targetAmount: e.target.value })} label="Target Amount" size="small" />
         <textarea style={{ minHeight:"17rem" }} value={fundraiser.description} onChange={(e) => setFundraiser({ ...fundraiser, description: e.target.value })} label="Description" size="small" />
         <TextField value={fundraiser.beneficiary} onChange={(e) => setFundraiser({ ...fundraiser, beneficiary: e.target.value })} label="Beneficiary" size="small" />
         <Button variant="outlined" onClick={() => createFundraiser()}>Submit</Button>

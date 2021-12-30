@@ -14,6 +14,8 @@ const FundraiserPage = ({ web3 }) => {
     const [ address, setAddress] = useState(null);
     const [ fundName, setFundname ] = useState(null);
     const [ description, setDescription ] = useState(null);
+    const [ targetAmount, setTargetAmount ] = useState(null);
+    const [ minimumContribution, setMinimumContribution ] = useState(null);
     const [ imageURL, setImageURL ] = useState(null);
     const [ donationAmount, setDonationAmount] = useState(null);
     const [ totalDonations, setTotalDonations ] = useState(null);
@@ -21,6 +23,15 @@ const FundraiserPage = ({ web3 }) => {
     const [ exchangeRate, setExchangeRate ] = useState(null);
     const [ currency, setCurrency ] = useState('INR');
     const [ isOwner, setIsOwner ] = useState(false);
+
+    const [request, setRequest] = useState({
+        name: '',
+        imageUrl: '',
+        description: '',
+        // minimumContribution: '',
+        targetAmount: '',
+        beneficiary: ''
+      });
 
     const init = async (fundraiser) => {
         try {
@@ -35,14 +46,19 @@ const FundraiserPage = ({ web3 }) => {
             const description = await instance.methods.description().call();
             const imageURL = await instance.methods.imageURL().call();
             const totalDonations = await instance.methods.totalDonations().call();
+            const targetAmount = await instance.methods.targetToAchieve().call();
+            // const minimumContribution = await instance.methods.minimumContribution().call();
             const benef = await instance.methods.beneficiary().call();
+
+            console.log(instance.methods)
             
             setExchangeRate(exchangeRate);
             setAccounts(accounts);
-            console.log(accounts)
             setInstance(instance);
             setFundname(name);
             setDescription(description);
+            // setMinimumContribution(minimumContribution);
+            setTargetAmount(targetAmount);
             setImageURL(imageURL);
             
             const eth = web3.utils.fromWei(totalDonations, 'ether')
@@ -90,6 +106,10 @@ const FundraiserPage = ({ web3 }) => {
         alert(`Funds Withdrawn!`)
     }
 
+    const createRequest = async () => {
+
+    }
+
     if(isLoading) return <p>Loading...</p>
 
     return (
@@ -101,6 +121,7 @@ const FundraiserPage = ({ web3 }) => {
                 <Grid md={6} lg={8}>
                     <Typography variant="h3">{fundName}</Typography>
                     <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">{ targetAmount }</Typography>
                     <Typography variant="h5" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
                 </Grid>
             </Grid>

@@ -17,6 +17,8 @@ contract FundraiserFactory {
         string memory name,
         string memory imageURL,
         string memory description,
+        // uint256 minimumContribution,
+        uint256 targetToAchieve,
         address payable beneficiary
     ) public {
         Fundraiser fundraiser =
@@ -24,6 +26,8 @@ contract FundraiserFactory {
                 name,
                 imageURL,
                 description,
+                // minimumContribution,
+                targetToAchieve,
                 beneficiary,
                 payable(msg.sender)
             );
