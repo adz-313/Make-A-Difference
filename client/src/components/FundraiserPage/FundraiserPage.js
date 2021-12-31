@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import FundraiserContract from "../../contracts/Fundraiser.json";
 import Web3 from 'web3';
-import { Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Paper, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
 import getWeb3 from '../../getWeb3';
@@ -89,37 +89,40 @@ const FundraiserPage = ({ web3 }) => {
     return (
         <div>
             <Grid container direction="row" marginTop="1rem">
-                <Grid md={6} lg={4}>
-                    <img src={imageURL} height={250}/>
+                <Grid sx={{padding: 2}} md={6} lg={8}>
+                    <img src={imageURL} height={250} style={{'marginLeft': '17rem', 'marginTop': '2rem', 'marginBottom': '2rem'}}/>
+                    <Typography variant="h4">{fundName}</Typography>
+                    <Typography sx={{mt: 1, mb: 1}} variant="body2" color="textSecondary" component="p">{ description }</Typography>
+                    <Typography sx={{color: '#3d5afe'}} variant="h6" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
                 </Grid>
-                <Grid md={6} lg={8}>
-                    <Typography variant="h3">{fundName}</Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
-                    <Typography variant="h5" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                <Grid md={6} lg={4} >
+                    <Paper sx={{padding: 2}}>
+                        <TextField variant="standard" sx={{mt: 3, width: '70%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                        <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
+                            <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                            <Select
+                                label="Currency"
+                                onChange={(e) => setCurrency(e.target.value)}
+                                value={currency}
+                            >
+                                <MenuItem value={'INR'}>INR</MenuItem>
+                                <MenuItem value={"USD"}>USD</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Button sx={{mt: 3, width: '90%', ml: 3}} variant="outlined" onClick={() => donate()}>Submit</Button>
+                        {isOwner &&
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={withdrawalFunds}
+                                sx={{mt: 3, width: '90%', ml: 3}}
+                            >
+                                Withdrawal
+                            </Button>
+                        }
+                    </Paper>
                 </Grid>
             </Grid>
-            <TextField sx={{mt: 3}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
-            <FormControl sx={{width: 150}}>
-                <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-                <Select
-                    label="Currency"
-                    onChange={(e) => setCurrency(e.target.value)}
-                    value={currency}
-                >
-                    <MenuItem value={'INR'}>INR</MenuItem>
-                    <MenuItem value={"USD"}>USD</MenuItem>
-                </Select>
-            </FormControl>
-            <Button sx={{mt: 3}} variant="outlined" onClick={() => donate()}>Submit</Button>
-            {isOwner &&
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={withdrawalFunds}
-                >
-                    Withdrawal
-                </Button>
-            }
         </div>
     )
 }
