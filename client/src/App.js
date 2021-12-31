@@ -5,9 +5,7 @@ import { Typography} from '@mui/material';
 import getWeb3 from './getWeb3';
 import FundraiserPage from './components/FundraiserPage/FundraiserPage';
 import Home from './components/Home/Home';
-import { FundraiserProvider } from './contexts/FundraiserContext'
-
-import getWeb3 from "./getWeb3";
+import { FundraiserProvider } from './contexts/FundraiserContext';
 
 const App = () => {
   const [ web3, setWeb3 ] = useState(null);

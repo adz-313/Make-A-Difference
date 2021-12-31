@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Typography, Button, Grid, TextField } from "@mui/material";
 import FactoryContract from "../../contracts/FundraiserFactory.json";
 
-import FactoryContract from "../../contracts/FundraiserFactory.json";
-
 const NewFundraiser = ({ web3 }) => {
 
   const [fundraiser, setFundraiser] = useState({
@@ -86,7 +84,6 @@ const NewFundraiser = ({ web3 }) => {
         <TextField value={fundraiser.name} onChange={(e) => setFundraiser({ ...fundraiser, name: e.target.value })} label="Name" size="small" />
         <TextField value={fundraiser.imageUrl} onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
         {/* <TextField value={fundraiser.minimumContribution} onChange={(e) => setFundraiser({ ...fundraiser, minimumContribution: e.target.value })} label="Minimum Contribution" size="small" /> */}
-        <TextField value={fundraiser.targetAmount} onChange={(e) => setFundraiser({ ...fundraiser, targetAmount: e.target.value })} label="Target Amount" size="small" />
         <textarea style={{ minHeight:"17rem" }} value={fundraiser.description} onChange={(e) => setFundraiser({ ...fundraiser, description: e.target.value })} label="Description" size="small" />
         <TextField value={fundraiser.targetToAchieve} onChange={(e) => setFundraiser({ ...fundraiser, targetToAchieve: e.target.value })} label="Target" size="small" />
         <TextField value={fundraiser.beneficiary} onChange={(e) => setFundraiser({ ...fundraiser, beneficiary: e.target.value })} label="Beneficiary" size="small" />

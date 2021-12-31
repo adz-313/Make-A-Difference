@@ -33,15 +33,6 @@ const FundraiserPage = ({ web3 }) => {
         recipient: ''
     });
 
-    const [request, setRequest] = useState({
-        name: '',
-        imageUrl: '',
-        description: '',
-        // minimumContribution: '',
-        targetAmount: '',
-        beneficiary: ''
-      });
-
     const init = async (fundraiser) => {
         try {
             const instance = new web3.eth.Contract(
