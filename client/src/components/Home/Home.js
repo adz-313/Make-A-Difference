@@ -5,12 +5,7 @@ import ActiveFundraisers from '../ActiveFundraisers/ActiveFundraisers';
 const Home = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers }) => {
   const [instance, setInstance] = useState(null);
   const [fundraisers, setFundraisers] = useState([]);
-  const [fundraiser, setFundraiser] = useState({
-    name: '',
-    imageUrl: '',
-    description: '',
-    beneficiary: ''
-  })
+  
   const [ accounts, setAccounts ] = useState(null);
 
   useEffect(() => {
@@ -19,31 +14,11 @@ const Home = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers }) =
     setFundraisers(myfundraisers)
   },[])
 
-  const clear = () => {
-    setFundraiser({
-      name: '',
-      imageUrl: '',
-      description: '',
-      beneficiary: ''
-    });
-  }
-
-  const createFundraiser = async () => {
-    await instance.methods.createFundraiser(
-      fundraiser.name,
-      fundraiser.imageUrl,
-      fundraiser.description,
-      fundraiser.beneficiary
-    ).send({ from: accounts[0] })
-
-    alert('Successfully created fundraiser')
-    if(instance) getFundraisers(instance)
-    clear()
-  }
+  
 
   return (
     <>
-        <NewFundraiser accounts={accounts} fundraiser={fundraiser} setFundraiser={setFundraiser} createFundraiser={createFundraiser} />
+        <NewFundraiser accounts={accounts} />
         <ActiveFundraisers web3={web3} fundraisers={fundraisers} />
     </>
   )

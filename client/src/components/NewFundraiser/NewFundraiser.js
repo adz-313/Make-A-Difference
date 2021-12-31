@@ -1,7 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, Button, Grid, TextField } from "@mui/material";
 
-const NewFundraiser = ({ accounts, fundraiser, setFundraiser, createFundraiser }) => {
+const NewFundraiser = ({ accounts }) => {
+
+  const [fundraiser, setFundraiser] = useState({
+    name: '',
+    imageUrl: '',
+    description: '',
+    beneficiary: ''
+  })
+
+  const clear = () => {
+    setFundraiser({
+      name: '',
+      imageUrl: '',
+      description: '',
+      beneficiary: ''
+    });
+  }
+
+  const createFundraiser = async () => {
+    await instance.methods.createFundraiser(
+      fundraiser.name,
+      fundraiser.imageUrl,
+      fundraiser.description,
+      fundraiser.beneficiary
+    ).send({ from: accounts[0] })
+
+    alert('Successfully created fundraiser')
+    clear()
+  }
 
   return (
     <Grid container direction="row" marginTop="1rem" minHeight="90vh">
@@ -23,6 +51,7 @@ const NewFundraiser = ({ accounts, fundraiser, setFundraiser, createFundraiser }
       <Grid direction="column" justifyContent="space-evenly" minHeight="75vh" marginTop={-1}  padding="0 2rem" paddingBottom={2} container xs={12} md={4} >
         <Typography variant="h6" alignSelf="center">Create A New Fundraiser</Typography>
         <TextField value={fundraiser.name} onChange={(e) => setFundraiser({ ...fundraiser, name: e.target.value })} label="Name" size="small" />
+        <TextField value={fundraiser.imageUrl} onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
         <TextField value={fundraiser.imageUrl} onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
         <textarea style={{ minHeight:"17rem" }} value={fundraiser.description} onChange={(e) => setFundraiser({ ...fundraiser, description: e.target.value })} label="Description" size="small" />
         <TextField value={fundraiser.beneficiary} onChange={(e) => setFundraiser({ ...fundraiser, beneficiary: e.target.value })} label="Beneficiary" size="small" />
