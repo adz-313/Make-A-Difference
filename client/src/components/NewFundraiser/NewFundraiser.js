@@ -1,20 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Button, Grid, TextField } from "@mui/material";
 
-const NewFundraiser = ({ accounts }) => {
+import FactoryContract from "../../contracts/FundraiserFactory.json";
+
+const NewFundraiser = ({ web3 }) => {
 
   const [fundraiser, setFundraiser] = useState({
     name: '',
     imageUrl: '',
     description: '',
+    targetToAchieve: '',
     beneficiary: ''
-  })
+  });
+  const [instance, setInstance] = useState(null);  
+  const [accounts, setAccounts] = useState(null);  
+
+  useEffect(() => {
+    const init = async() => {
+      try {
+        const accounts = await web3.eth.getAccounts();
+
+        const networkId = await web3.eth.net.getId();
+        const deployedNetwork = FactoryContract.networks[networkId];
+        const instance = new web3.eth.Contract(
+          FactoryContract.abi,
+          deployedNetwork && deployedNetwork.address,
+        );
+        
+        setInstance(instance);
+        setAccounts(accounts);
+        
+
+      } catch(error) {
+        alert(`Failed to load web3, accounts, or contract. Check console for details.`,);
+        console.error(error);
+      }
+    }
+    if(web3) init();
+    
+  }, []);
 
   const clear = () => {
     setFundraiser({
       name: '',
       imageUrl: '',
       description: '',
+      targetToAchieve: '',
       beneficiary: ''
     });
   }
@@ -24,6 +55,7 @@ const NewFundraiser = ({ accounts }) => {
       fundraiser.name,
       fundraiser.imageUrl,
       fundraiser.description,
+      fundraiser.targetToAchieve,
       fundraiser.beneficiary
     ).send({ from: accounts[0] })
 
@@ -52,8 +84,8 @@ const NewFundraiser = ({ accounts }) => {
         <Typography variant="h6" alignSelf="center">Create A New Fundraiser</Typography>
         <TextField value={fundraiser.name} onChange={(e) => setFundraiser({ ...fundraiser, name: e.target.value })} label="Name" size="small" />
         <TextField value={fundraiser.imageUrl} onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
-        <TextField value={fundraiser.imageUrl} onChange={(e) => setFundraiser({ ...fundraiser, imageUrl: e.target.value })} label="Image URL" size="small" />
         <textarea style={{ minHeight:"17rem" }} value={fundraiser.description} onChange={(e) => setFundraiser({ ...fundraiser, description: e.target.value })} label="Description" size="small" />
+        <TextField value={fundraiser.targetToAchieve} onChange={(e) => setFundraiser({ ...fundraiser, targetToAchieve: e.target.value })} label="Target" size="small" />
         <TextField value={fundraiser.beneficiary} onChange={(e) => setFundraiser({ ...fundraiser, beneficiary: e.target.value })} label="Beneficiary" size="small" />
         <Button variant="outlined" onClick={() => createFundraiser()}>Submit</Button>
       </Grid>

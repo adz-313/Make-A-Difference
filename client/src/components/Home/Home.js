@@ -2,24 +2,11 @@ import React, { useState, useEffect } from 'react';
 import NewFundraiser from '../NewFundraiser/NewFundraiser';
 import ActiveFundraisers from '../ActiveFundraisers/ActiveFundraisers';
 
-const Home = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers }) => {
-  const [instance, setInstance] = useState(null);
-  const [fundraisers, setFundraisers] = useState([]);
-  
-  const [ accounts, setAccounts ] = useState(null);
-
-  useEffect(() => {
-    setInstance(myinstance)
-    setAccounts(myaccounts)
-    setFundraisers(myfundraisers)
-  },[])
-
-  
-
+const Home = ({ web3 }) => {
   return (
     <>
-        <NewFundraiser accounts={accounts} />
-        <ActiveFundraisers web3={web3} fundraisers={fundraisers} />
+        <NewFundraiser web3={web3} />
+        <ActiveFundraisers web3={web3} />
     </>
   )
 }
