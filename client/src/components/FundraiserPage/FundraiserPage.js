@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import FundraiserContract from "../../contracts/Fundraiser.json";
-import Web3 from 'web3';
-import { Paper, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
-import getWeb3 from '../../getWeb3';
 const cc = require('cryptocompare');
 
 const FundraiserPage = ({ web3 }) => {
     const params = useParams();
 
     const [ instance, setInstance] = useState(null);
-    const [ address, setAddress] = useState(null);
+    const [ beneficiary, setBeneficiary] = useState(null);
     const [ fundName, setFundname ] = useState(null);
     const [ description, setDescription ] = useState(null);
     const [ imageURL, setImageURL ] = useState(null);
     const [ donationAmount, setDonationAmount] = useState(null);
     const [ totalDonations, setTotalDonations ] = useState(null);
+    const [ target, setTarget ] = useState(null);
     const [ accounts, setAccounts ] = useState(null);
     const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [ donationsCount, setDonationsCount ] = useState(null);
     const [ currency, setCurrency ] = useState('INR');
     const [ isOwner, setIsOwner ] = useState(false);
+    const [ isApprover, setIsApprover ] = useState(true);
+    const [ requests, setRequests ] = useState([]);
+
+    const [request, setRequest] = useState({
+        description: '',
+        value: '',
+        recipient: ''
+    });
 
     const init = async (fundraiser) => {
         try {
@@ -34,8 +42,12 @@ const FundraiserPage = ({ web3 }) => {
             const name = await instance.methods.name().call();
             const description = await instance.methods.description().call();
             const imageURL = await instance.methods.imageURL().call();
+            const target = await instance.methods.targetToAchieve().call();
             const totalDonations = await instance.methods.totalDonations().call();
-            const benef = await instance.methods.beneficiary().call();
+            const donationsCount = await instance.methods.donationsCount().call();
+            const beneficiary = await instance.methods.beneficiary().call();
+
+            setDonationsCount(donationsCount);
             
             setExchangeRate(exchangeRate);
             setAccounts(accounts);
@@ -43,14 +55,25 @@ const FundraiserPage = ({ web3 }) => {
             setFundname(name);
             setDescription(description);
             setImageURL(imageURL);
+            setBeneficiary(beneficiary);
+            setTarget(target);
             
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
             const isOwner = await instance.methods.owner().call();
 
-            if (isOwner === accounts[0]) {
+            if(isOwner === accounts[0]) {
                 setIsOwner(true)
+            }
+
+            const isApprover = await instance.methods.approvers(accounts[0]).call();
+            setIsApprover(isApprover);
+            
+            const count = await instance.methods.getRequestsCount().call();
+            for(let i=0; i<count; i++) {
+                const req = await instance.methods.requests(i).call();
+                setRequests(requests => [ ...requests, req]);
             }
 
           }
@@ -68,35 +91,49 @@ const FundraiserPage = ({ web3 }) => {
 
     const donate = async () => {
         const ethTotal = donationAmount/ exchangeRate[currency];
-        const donation = web3.utils.toWei(ethTotal.toFixed(18).toString())
+        const donation = web3.utils.toWei(ethTotal.toFixed(18).toString());
         await instance.methods.donate().send({
             from: accounts[0],
             value: donation,
             gas: 650000
-        })
-        console.log(ethTotal, donation ,totalDonations)
+        });
     }
 
-    const withdrawalFunds = async () => {
-        const val = web3.utils.toWei(totalDonations.toString());
-        const x = await instance.methods.withdraw().send({
+    const withdrawFunds = async index => {
+        const x = await instance.methods.finalizeRequest(index).send({
           from: accounts[0],
-        })
-        console.log(x)
+        });
         alert(`Funds Withdrawn!`)
+    }
+
+    const createRequest = async () => {
+        request.recipient = beneficiary;
+        const ethTotal = request.value/ exchangeRate[currency];
+        const withdrawAmount = web3.utils.toWei(ethTotal.toFixed(18).toString());
+        await instance.methods.createRequest(
+            request.description,
+            withdrawAmount,
+            request.recipient
+        ).send({ from: accounts[0] });
+    }
+
+    const approveRequest = async index => {
+        await instance.methods.approveRequest(index).send({ from: accounts[0] });
     }
 
     return (
         <div>
             <Grid container direction="row" marginTop="1rem">
-                <Grid sx={{padding: 2}} md={6} lg={8}>
+                <Grid item sx={{padding: 2}} md={6} lg={8}>
                     <img src={imageURL} height={250} style={{'marginLeft': '17rem', 'marginTop': '2rem', 'marginBottom': '2rem'}}/>
                     <Typography variant="h4">{fundName}</Typography>
                     <Typography sx={{mt: 1, mb: 1}} variant="body2" color="textSecondary" component="p">{ description }</Typography>
                     <Typography sx={{color: '#3d5afe'}} variant="h6" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                    <Typography variant="h6" color="textSecondary" component="h5">Target: { target }</Typography>
                 </Grid>
-                <Grid md={6} lg={4} >
+                <Grid item md={6} lg={4} >
                     <Paper sx={{padding: 2}}>
+                        <Typography variant='h6'>Donate Now</Typography>
                         <TextField variant="standard" sx={{mt: 3, width: '70%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
                         <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
                             <InputLabel id="demo-simple-select-label">Currency</InputLabel>
@@ -110,19 +147,49 @@ const FundraiserPage = ({ web3 }) => {
                             </Select>
                         </FormControl>
                         <Button sx={{mt: 3, width: '90%', ml: 3}} variant="outlined" onClick={() => donate()}>Submit</Button>
-                        {isOwner &&
+                    </Paper>
+                    {isOwner &&
+                        <Paper sx={{padding: 2, mt: 2}}>
+                            <Typography variant='h6'>Withdraw Request</Typography>
+                            <TextField fullWidth variant="standard" onChange={(e) => setRequest({...request, description: e.target.value})} label='Description' />
+                            <TextField fullWidth variant="standard" onChange={(e) => setRequest({...request, value: e.target.value})} label='Value' />
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={withdrawalFunds}
+                                onClick={createRequest}
                                 sx={{mt: 3, width: '90%', ml: 3}}
                             >
-                                Withdrawal
+                                Create Request
                             </Button>
-                        }
-                    </Paper>
+                        </Paper>
+                    }
                 </Grid>
             </Grid>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                    <TableRow>
+                        <TableCell>Description</TableCell>
+                        <TableCell align="right">Value</TableCell>
+                        <TableCell align="right">Approver Count</TableCell>
+                        <TableCell align="right">Complete</TableCell>
+                        <TableCell align="right">Approve</TableCell>
+                    </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {requests ? requests.map((req, index) => (
+                            <TableRow>
+                                <TableCell>{req.description }</TableCell>
+                                <TableCell align="right">{exchangeRate ? (web3.utils.fromWei(req.value, 'ether') * exchangeRate[currency]).toFixed(0) : 'Loading...'}</TableCell>
+                                <TableCell align="right">{req.approvalCount}</TableCell>
+                                <TableCell align="right">{req.complete ? 'Completed' : 'Pending'}</TableCell>
+                                {isApprover && <TableCell align="right"><Button disabled={!isApprover || req.complete} variant="contained" onClick={() => approveRequest(index)}>Approve</Button></TableCell>}
+                                {isOwner && <TableCell align="right"><Button disabled={(donationsCount && req.approvalCount < donationsCount/2) || req.complete} variant="contained" onClick={() => withdrawFunds(index)}>Withdraw</Button></TableCell>}
+                            </TableRow>
+                        )) : 'Loading...'}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </div>
     )
 }

@@ -19,10 +19,12 @@ const ActiveFundraisers = ({ web3 }) => {
             );
             
             setInstance(instance);
+            const funds = await instance.methods.fundraisers(10, 0).call();
+            setFundraisers(funds);
             
     
           } catch(error) {
-            alert(`Failed to load web3, accounts, or contract. Check console for details. bsdghdh`,);
+            alert(`Failed to load web3, accounts, or contract. Check console for details.`,);
             console.error(error);
           }
         }
@@ -38,10 +40,6 @@ const ActiveFundraisers = ({ web3 }) => {
           alert(error)
         }
     }
-
-    useEffect(() => {
-      getFundraisers();
-    }, []);
 
     return (
         <div>

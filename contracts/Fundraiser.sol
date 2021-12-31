@@ -74,6 +74,7 @@ contract Fundraiser is Ownable {
         });
         _donations[msg.sender].push(donation);
         totalDonations = totalDonations.add(msg.value);
+        approvers[msg.sender] = true;
         donationsCount++;
 
         emit DonationReceived(msg.sender, msg.value);
@@ -140,5 +141,9 @@ contract Fundraiser is Ownable {
 
     function getRequestsCount() public view returns (uint256) {
         return requests.length;
+    }
+
+    function isDonor() public view returns (bool) {
+        return approvers[msg.sender];
     }
 }
