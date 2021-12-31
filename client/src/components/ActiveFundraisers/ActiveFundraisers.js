@@ -1,14 +1,45 @@
-import React, {useContext, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import FundraiserCard from './FundraiserCard/FundraiserCard';
 import { Grid, Typography } from '@mui/material';
-import { FundraiserContext } from '../../contexts/FundraiserContext';
+import FactoryContract from "../../contracts/FundraiserFactory.json";
+
 
 const ActiveFundraisers = ({ web3 }) => {
-    const [fundraisers, setFundraisers] = useContext(FundraiserContext);
+    const [fundraisers, setFundraisers] = useState([]);  
+    const [instance, setInstance] = useState(null);  
 
     useEffect(() => {
-        console.log(fundraisers)
-    },[])
+        const init = async() => {
+          try {
+            const networkId = await web3.eth.net.getId();
+            const deployedNetwork = FactoryContract.networks[networkId];
+            const instance = new web3.eth.Contract(
+              FactoryContract.abi,
+              deployedNetwork && deployedNetwork.address,
+            );
+            
+            setInstance(instance);
+            const funds = await instance.methods.fundraisers(10, 0).call();
+            setFundraisers(funds);
+            
+    
+          } catch(error) {
+            alert(`Failed to load web3, accounts, or contract. Check console for details.`,);
+            console.error(error);
+          }
+        }
+        if(web3) init();
+        
+      }, []);
+
+    const getFundraisers = async (instance) => {
+        try {
+          const funds = await instance.methods.fundraisers(10, 0).call();
+          setFundraisers(funds);
+        } catch (error) {
+          alert(error)
+        }
+    }
 
     return (
         <div>

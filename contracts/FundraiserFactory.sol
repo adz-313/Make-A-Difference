@@ -21,16 +21,15 @@ contract FundraiserFactory {
         uint256 targetToAchieve,
         address payable beneficiary
     ) public {
-        Fundraiser fundraiser =
-            new Fundraiser(
-                name,
-                imageURL,
-                description,
-                // minimumContribution,
-                targetToAchieve,
-                beneficiary,
-                payable(msg.sender)
-            );
+        Fundraiser fundraiser = new Fundraiser(
+            name,
+            imageURL,
+            description,
+            // minimumContribution,
+            targetToAchieve,
+            beneficiary,
+            payable(msg.sender)
+        );
         _fundraisers.push(fundraiser);
         emit FundraiserCreated(fundraiser, fundraiser.owner());
     }

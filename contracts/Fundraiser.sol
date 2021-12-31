@@ -14,10 +14,10 @@ contract Fundraiser is Ownable {
 
     struct Request {
         string description;
-        uint value;
+        uint256 value;
         address payable recipient;
         bool complete;
-        uint approvalCount;
+        uint256 approvalCount;
         mapping(address => bool) approvals;
     }
 
@@ -68,10 +68,13 @@ contract Fundraiser is Ownable {
     function donate() external payable {
         // require(msg.value > minimumContribution);
 
-        Donation memory donation =
-            Donation({value: msg.value, date: block.timestamp});
+        Donation memory donation = Donation({
+            value: msg.value,
+            date: block.timestamp
+        });
         _donations[msg.sender].push(donation);
         totalDonations = totalDonations.add(msg.value);
+        approvers[msg.sender] = true;
         donationsCount++;
 
         emit DonationReceived(msg.sender, msg.value);
@@ -107,7 +110,11 @@ contract Fundraiser is Ownable {
         donationsCount++;
     }
 
-    function createRequest(string memory _description, uint _value, address payable _recipient) public onlyOwner {
+    function createRequest(
+        string memory _description,
+        uint256 _value,
+        address payable _recipient
+    ) public onlyOwner {
         Request storage newRequest = requests.push();
         newRequest.description = _description;
         newRequest.value = _value;
@@ -116,7 +123,7 @@ contract Fundraiser is Ownable {
         newRequest.approvalCount = 0;
     }
 
-    function approveRequest(uint index) public {
+    function approveRequest(uint256 index) public {
         require(approvers[msg.sender]);
         require(!requests[index].approvals[msg.sender]);
 
@@ -124,16 +131,19 @@ contract Fundraiser is Ownable {
         requests[index].approvalCount++;
     }
 
-    function finalizeRequest(uint index) public onlyOwner{
+    function finalizeRequest(uint256 index) public onlyOwner {
         require(requests[index].approvalCount > (approversCount / 2));
         require(!requests[index].complete);
 
         requests[index].recipient.transfer(requests[index].value);
         requests[index].complete = true;
-
     }
 
-    function getRequestsCount() public view returns (uint){
+    function getRequestsCount() public view returns (uint256) {
         return requests.length;
+    }
+
+    function isDonor() public view returns (bool) {
+        return approvers[msg.sender];
     }
 }

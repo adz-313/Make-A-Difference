@@ -1,19 +1,20 @@
-import React,{useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Typography, Button, Grid, TextField } from "@mui/material";
 import FactoryContract from "../../contracts/FundraiserFactory.json";
 
+import FactoryContract from "../../contracts/FundraiserFactory.json";
+
 const NewFundraiser = ({ web3 }) => {
-  const [instance, setInstance] = useState(null);
+
   const [fundraiser, setFundraiser] = useState({
     name: '',
     imageUrl: '',
     description: '',
-    // minimumContribution: '',
-    targetAmount: '',
+    targetToAchieve: '',
     beneficiary: ''
   });
-  const [ accounts, setAccounts ] = useState(null);
-
+  const [instance, setInstance] = useState(null);  
+  const [accounts, setAccounts] = useState(null);  
 
   useEffect(() => {
     const init = async() => {
@@ -26,9 +27,10 @@ const NewFundraiser = ({ web3 }) => {
           FactoryContract.abi,
           deployedNetwork && deployedNetwork.address,
         );
-
+        
         setInstance(instance);
         setAccounts(accounts);
+        
 
       } catch(error) {
         alert(`Failed to load web3, accounts, or contract. Check console for details.`,);
@@ -44,8 +46,7 @@ const NewFundraiser = ({ web3 }) => {
       name: '',
       imageUrl: '',
       description: '',
-      // minimumContribution: '',
-      targetAmount: '',
+      targetToAchieve: '',
       beneficiary: ''
     });
   }
@@ -55,8 +56,7 @@ const NewFundraiser = ({ web3 }) => {
       fundraiser.name,
       fundraiser.imageUrl,
       fundraiser.description,
-      // fundraiser.minimumContribution,
-      fundraiser.targetAmount,
+      fundraiser.targetToAchieve,
       fundraiser.beneficiary
     ).send({ from: accounts[0] })
 
@@ -88,6 +88,7 @@ const NewFundraiser = ({ web3 }) => {
         {/* <TextField value={fundraiser.minimumContribution} onChange={(e) => setFundraiser({ ...fundraiser, minimumContribution: e.target.value })} label="Minimum Contribution" size="small" /> */}
         <TextField value={fundraiser.targetAmount} onChange={(e) => setFundraiser({ ...fundraiser, targetAmount: e.target.value })} label="Target Amount" size="small" />
         <textarea style={{ minHeight:"17rem" }} value={fundraiser.description} onChange={(e) => setFundraiser({ ...fundraiser, description: e.target.value })} label="Description" size="small" />
+        <TextField value={fundraiser.targetToAchieve} onChange={(e) => setFundraiser({ ...fundraiser, targetToAchieve: e.target.value })} label="Target" size="small" />
         <TextField value={fundraiser.beneficiary} onChange={(e) => setFundraiser({ ...fundraiser, beneficiary: e.target.value })} label="Beneficiary" size="small" />
         <Button variant="outlined" onClick={() => createFundraiser()}>Submit</Button>
       </Grid>
