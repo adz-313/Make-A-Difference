@@ -8,6 +8,7 @@ const initialState = {
     name: '',
     imageUrl: '',
     description: '',
+    targetToAchieve: '',
     beneficiary: ''
 }
 
@@ -80,6 +81,18 @@ const CreateCampaign = ({ web3, myinstance, myaccounts, myfundraisers, getFundra
                         label="Beneficiary"
                         id="beneficiary"
                         value={formData.beneficiary}
+                        onChange={handleChange}
+                    />
+
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="beneficiary"
+                        label="Target Amount"
+                        id="beneficiary"
+                        value={formData.targetToAchieve}
                         onChange={handleChange}
                     />
 
