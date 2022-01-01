@@ -13,6 +13,7 @@ import Navbar from './components/Navbar/Navbar';
 import { dark, light } from './constants/theme';
 import HomePage from './components/HomePage/HomePage';
 import  WithDrawalRequest from './components/WithDrawals/WithDrawalRequest';
+import ViewWithDrawalRequests from './components/WithDrawals/ViewWithDrawalRequests';
 
 const App = () => {
   const [instance, setInstance] = useState(null);
@@ -92,7 +93,8 @@ const App = () => {
             <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
             <Route path="/home" exact component={() => <HomePage web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} />
             <Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
-            <Route path="/withdrawal/request" exact component={WithDrawalRequest} />
+            <Route path="/fundraiser/:id/withdrawal/new" exact component={WithDrawalRequest} />
+            <Route path="/allrequests" exact component={ViewWithDrawalRequests} />
           </Switch>
         </Container>
       </MuiThemeProvider>

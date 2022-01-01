@@ -28,13 +28,13 @@ const HomePage = ({ web3, myinstance, myaccounts, myfundraisers, getFundraisers 
         <Container>
             <Box
                 sx={{
-                    flexGrow: 1
+                    flexGrow: 1,
+                    marginTop: "5rem"
                 }}
             >
             <Grid container  spacing={5} direction="column" alignItems="center">
                 <Grid item xs={12}>
                     <ActiveFundraisers web3={web3} fundraisers={fundraisers} />
-                    <Typography>Active Campaigns</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <HowItWorks />

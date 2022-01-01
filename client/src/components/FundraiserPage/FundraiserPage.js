@@ -140,7 +140,7 @@ const FundraiserPage = ({ web3 }) => {
             <Box
                 sx={{
                     flexGrow: 1,
-                    marginTop: "3rem",
+                    marginTop: "5rem",
                     
                 }}
             >
@@ -157,7 +157,11 @@ const FundraiserPage = ({ web3 }) => {
                                 
                             }}
                         >
-                            <Card>
+                            <Card
+                                sx={{
+                                    position: "fixed"
+                                }}
+                            >
                                 <CardContent>
                                     <Typography color="text.primary" variant="h5" component="div">$125 raised out of $500</Typography>
                                     <BorderLinearProgress variant="determinate" value={30} />
@@ -182,30 +186,51 @@ const FundraiserPage = ({ web3 }) => {
                                     subheader="$40"
                                 />
                                 <CardActions>
-
-                                    {
-                                        !isOwner &&
+                                   
+                                        {
+                                            !isOwner &&
+                                            <Button
+                                                fullWidth
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => donate()}
+                                            >Donate Now
+                                            </Button>
+                                        }
+                                    
+                                </CardActions>
+                                <CardActions>
+                                 
+                                        {
+                                            isOwner &&
+                                            <Button
+                                                fullWidth
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={withdrawalFunds}
+                                            >
+                                                Withdraw
+                                            </Button>
+                                        }
+                                    
+                                    </CardActions>
+                                    <CardActions>
+                                    <div>
                                         <Button
                                             fullWidth
-                                            variant="contained"
+                                            variant="outlined"
                                             color="primary"
-                                            onClick={() => donate()}
-                                        >Donate Now
-                                        </Button>
-                                    }
-                                    {
-                                        isOwner &&
-                                        <Button
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={withdrawalFunds}
                                         >
-                                            Withdraw
+                                            View WithDrawal Requests
                                         </Button>
-                                    }
-
-                                    <Button>See All Donations</Button>
+                                    </div>
+                                    <div>
+                                        <Button
+                                            fullWidth
+                                            variant="outlined"
+                                            color="primary"
+                                        >See All Donations</Button>
+                                    </div>
 
                                 </CardActions>
 
