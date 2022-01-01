@@ -24,8 +24,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const ViewWithDrawalRequests = () => {
 
-    console.log("HI")
-
     return (
         <Box
             sx={{
