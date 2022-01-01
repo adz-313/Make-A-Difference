@@ -10,7 +10,7 @@ const Navbar = ({theme, toggleTheme}) => {
     const classes = useStyles();
 
     return (
-        <AppBar position="static">
+        <AppBar position="fixed">
             <Toolbar>
                 
                     <div className={classes.arrange}>
