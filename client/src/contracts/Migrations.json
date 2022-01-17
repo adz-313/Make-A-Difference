@@ -1853,12 +1853,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xAE7f8479734177E39bB6dD3aE544a53c0c4a07c1",
-      "transactionHash": "0x8bd0391d92ce8e400590aceaa1ac0a1caca4601d1d5c396f9b1a1f9fca4b6752"
+      "address": "0x57c1BC847f0e3408b98DCcbC3FcD541e9aC3F1d6",
+      "transactionHash": "0x6be9d24b58a5456ff6c212df1d2e46e7a1fc1bb2ee64e1b154a831382fcfa7a1"
     }
   },
   "schemaVersion": "3.4.4",
-  "updatedAt": "2022-01-01T07:14:20.023Z",
+  "updatedAt": "2022-01-17T16:42:38.790Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
