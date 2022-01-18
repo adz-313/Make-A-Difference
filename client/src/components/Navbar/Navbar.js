@@ -5,7 +5,7 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 
 import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
 
-const Navbar = ({theme, toggleTheme}) => {
+const Navbar = () => {
 
 
     return (
@@ -26,10 +26,9 @@ const Navbar = ({theme, toggleTheme}) => {
                     
                         <Typography component={Link} to="/campaign/new"  sx={{ textDecoration: "none", color: "inherit", mr: 3}} variant="h5" >Create Campaign</Typography>
                         <Typography component={Link} to="/"  sx={{  textDecoration: "none", color: "inherit"}} variant="h5"  >How it Works</Typography>
-                        <IconButton  sx={{mr:1}}  onClick={toggleTheme}>
-                            {
-                                theme === 'dark' ? <Brightness5Icon /> : <Brightness4Icon />
-                            }
+                        <IconButton  sx={{mr:1}}>
+                            <Brightness5Icon />
+                            
                         </IconButton>
                     
                 

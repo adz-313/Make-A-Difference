@@ -10,7 +10,6 @@ import getWeb3 from "./getWeb3";
 import { useDarkMode } from './Hooks/useDarkMode';
 import { MuiThemeProvider } from '@material-ui/core';
 import Navbar from './components/Navbar/Navbar';
-import { dark, light } from './constants/theme';
 import HomePage from './components/HomePage/HomePage';
 import  WithDrawalRequest from './components/WithDrawals/WithDrawalRequest';
 import ViewWithDrawalRequests from './components/WithDrawals/ViewWithDrawalRequests';
@@ -18,11 +17,6 @@ import ViewWithDrawalRequests from './components/WithDrawals/ViewWithDrawalReque
 const App = () => {
 
   const [ web3, setWeb3 ] = useState(null);
-
-
-  const [theme, toggleTheme, componentMounted] = useDarkMode();
-
-  const themeMode = theme === 'light' ? light : dark;
 
   useEffect(() => {
     const init = async() => {
@@ -43,18 +37,10 @@ const App = () => {
     window.location.reload()
   })
 
-  
-
-    // Warning: If any hook is defined under this, it will give error: React Hook "useLocation" is called conditionally
-    if(!componentMounted) {
-      return <div />
-    };
-
    return (
     <>
-      <MuiThemeProvider theme={themeMode}>
         <CssBaseline />
-        <Navbar theme={theme} toggleTheme={toggleTheme}/>
+        <Navbar/>
         <Container>
           <Switch>
             <Route path="/campaign/new" exact component={() => <CreateCampaign web3={web3}/>} />
@@ -65,7 +51,6 @@ const App = () => {
             <Route path="/fundraiser/:id/allrequests" exact component={ViewWithDrawalRequests} />
           </Switch>
         </Container>
-      </MuiThemeProvider>
     </>
   )
 }
