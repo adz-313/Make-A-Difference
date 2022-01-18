@@ -53,6 +53,7 @@ const WithDrawalRequest = () => {
                         <TextField 
                             sx={{mt: 3}}
                             value={formData.amount} 
+                            name="amount"
                             onChange={handleChange} 
                             label={`Donation in ${currency}`} 
                             size="small" 
