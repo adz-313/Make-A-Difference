@@ -183,28 +183,21 @@ const FundraiserPage = ({ web3 }) => {
                                 }}
                             >
                                 <CardContent>
-                                    <Typography color="text.primary" variant="h5" component="div">$125 raised out of $500</Typography>
+                                    <Typography color="text.primary" variant="h5" component="div">{exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of {target} {currency === 'INR' ? '₹' : '$'}</Typography>
                                     <BorderLinearProgress variant="determinate" value={30} />
                                 </CardContent>
-                                <CardHeader 
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                            A
-                                        </Avatar>
-                                    }
-                                    title="Alex"
-                                    subheader="$20"
-                                />
-                                <hr/>
-                                <CardHeader 
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                            A
-                                        </Avatar>
-                                    }
-                                    title="Tom"
-                                    subheader="$40"
-                                />
+                                <TextField onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                                <FormControl sx={{width: 150}}>
+                                    <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                                    <Select
+                                        label="Currency"
+                                        onChange={(e) => setCurrency(e.target.value)}
+                                        value={currency}
+                                    >
+                                        <MenuItem value={'INR'}>INR</MenuItem>
+                                        <MenuItem value={"USD"}>USD</MenuItem>
+                                    </Select>
+                                </FormControl>
                                 <CardActions>
                                    
                                         {
