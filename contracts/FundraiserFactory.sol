@@ -1,3 +1,4 @@
+
 // SPDX-License-Identifier: UNLICENSED
 
 pragma solidity 0.8.9;
@@ -17,16 +18,19 @@ contract FundraiserFactory {
         string memory name,
         string memory imageURL,
         string memory description,
+        // uint256 minimumContribution,
+        uint256 targetToAchieve,
         address payable beneficiary
     ) public {
-        Fundraiser fundraiser =
-            new Fundraiser(
-                name,
-                imageURL,
-                description,
-                beneficiary,
-                payable(msg.sender)
-            );
+        Fundraiser fundraiser = new Fundraiser(
+            name,
+            imageURL,
+            description,
+            // minimumContribution,
+            targetToAchieve,
+            beneficiary,
+            payable(msg.sender)
+        );
         _fundraisers.push(fundraiser);
         emit FundraiserCreated(fundraiser, fundraiser.owner());
     }

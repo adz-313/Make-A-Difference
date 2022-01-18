@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import getWeb3 from '../../getWeb3';
 import Web3 from 'web3';
 import FundraiserContract from "../../contracts/Fundraiser.json";
@@ -7,6 +7,7 @@ import { Typography, TextField, Button, Grid, FormControl, InputLabel, Select, M
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { grey } from '@mui/material/colors';
+import WithDrawalRequest from '../WithDrawals/WithDrawalRequest';
 const cc = require('cryptocompare');
 
 
@@ -27,16 +28,20 @@ const FundraiserPage = ({ web3 }) => {
     const params = useParams();
 
     const [ instance, setInstance] = useState(null);
-    const [ address, setAddress] = useState(null);
+    const [ beneficiary, setBeneficiary] = useState(null);
     const [ fundName, setFundname ] = useState(null);
     const [ description, setDescription ] = useState(null);
     const [ imageURL, setImageURL ] = useState(null);
     const [ donationAmount, setDonationAmount] = useState(null);
     const [ totalDonations, setTotalDonations ] = useState(null);
+    const [ target, setTarget ] = useState(null);
     const [ accounts, setAccounts ] = useState(null);
     const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [ donationsCount, setDonationsCount ] = useState(null);
     const [ currency, setCurrency ] = useState('INR');
     const [ isOwner, setIsOwner ] = useState(false);
+    const [ isApprover, setIsApprover ] = useState(true);
+    const [ requests, setRequests ] = useState([]);
 
     const init = async (fundraiser) => {
         try {
@@ -50,8 +55,12 @@ const FundraiserPage = ({ web3 }) => {
             const name = await instance.methods.name().call();
             const description = await instance.methods.description().call();
             const imageURL = await instance.methods.imageURL().call();
+            const target = await instance.methods.targetToAchieve().call();
             const totalDonations = await instance.methods.totalDonations().call();
-            const benef = await instance.methods.beneficiary().call();
+            const donationsCount = await instance.methods.donationsCount().call();
+            const beneficiary = await instance.methods.beneficiary().call();
+
+            setDonationsCount(donationsCount);
             
             setExchangeRate(exchangeRate);
             setAccounts(accounts);
@@ -59,14 +68,25 @@ const FundraiserPage = ({ web3 }) => {
             setFundname(name);
             setDescription(description);
             setImageURL(imageURL);
-            console.log(instance)
+            setBeneficiary(beneficiary);
+            setTarget(target);
+            
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
             const isOwner = await instance.methods.owner().call();
 
-            if (isOwner === accounts[0]) {
+            if(isOwner === accounts[0]) {
                 setIsOwner(true)
+            }
+
+            const isApprover = await instance.methods.approvers(accounts[0]).call();
+            setIsApprover(isApprover);
+            
+            const count = await instance.methods.getRequestsCount().call();
+            for(let i=0; i<count; i++) {
+                const req = await instance.methods.requests(i).call();
+                setRequests(requests => [ ...requests, req]);
             }
 
           }
@@ -207,7 +227,7 @@ const FundraiserPage = ({ web3 }) => {
                                                 fullWidth
                                                 variant="contained"
                                                 color="primary"
-                                                onClick={withdrawalFunds}
+                                                component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
                                             >
                                                 Withdraw
                                             </Button>

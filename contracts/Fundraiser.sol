@@ -11,14 +11,30 @@ contract Fundraiser is Ownable {
         uint256 value;
         uint256 date;
     }
+
+    struct Request {
+        string description;
+        uint256 value;
+        address payable recipient;
+        bool complete;
+        uint256 approvalCount;
+        mapping(address => bool) approvals;
+    }
+
     mapping(address => Donation[]) private _donations;
 
+    Request[] public requests;
     string public name;
     string public imageURL;
     string public description;
     address payable public beneficiary;
     uint256 public totalDonations;
     uint256 public donationsCount;
+    uint256 public minimumContribution;
+    uint256 public targetToAchieve;
+    address[] public contributers;
+    mapping(address => bool) public approvers;
+    uint256 public approversCount;
 
     event DonationReceived(address indexed donor, uint256 value);
     event Withdraw(uint256 amount);
@@ -27,6 +43,8 @@ contract Fundraiser is Ownable {
         string memory _name,
         string memory _imageURL,
         string memory _description,
+        // uint256 _minimumContribution,
+        uint256 _targetToAchieve,
         address _owner,
         address payable _beneficiary
     ) public {
@@ -34,6 +52,8 @@ contract Fundraiser is Ownable {
         imageURL = _imageURL;
         description = _description;
         beneficiary = _beneficiary;
+        // minimumContribution = _minimumContribution;
+        targetToAchieve = _targetToAchieve;
         transferOwnership(_owner);
     }
 
@@ -46,10 +66,15 @@ contract Fundraiser is Ownable {
     }
 
     function donate() external payable {
-        Donation memory donation =
-            Donation({value: msg.value, date: block.timestamp});
+        // require(msg.value > minimumContribution);
+
+        Donation memory donation = Donation({
+            value: msg.value,
+            date: block.timestamp
+        });
         _donations[msg.sender].push(donation);
         totalDonations = totalDonations.add(msg.value);
+        approvers[msg.sender] = true;
         donationsCount++;
 
         emit DonationReceived(msg.sender, msg.value);
@@ -83,5 +108,42 @@ contract Fundraiser is Ownable {
     receive() external payable {
         totalDonations = totalDonations.add(msg.value);
         donationsCount++;
+    }
+
+    function createRequest(
+        string memory _description,
+        uint256 _value,
+        address payable _recipient
+    ) public onlyOwner {
+        Request storage newRequest = requests.push();
+        newRequest.description = _description;
+        newRequest.value = _value;
+        newRequest.recipient = _recipient;
+        newRequest.complete = false;
+        newRequest.approvalCount = 0;
+    }
+
+    function approveRequest(uint256 index) public {
+        require(approvers[msg.sender]);
+        require(!requests[index].approvals[msg.sender]);
+
+        requests[index].approvals[msg.sender] = true;
+        requests[index].approvalCount++;
+    }
+
+    function finalizeRequest(uint256 index) public onlyOwner {
+        require(requests[index].approvalCount > (approversCount / 2));
+        require(!requests[index].complete);
+
+        requests[index].recipient.transfer(requests[index].value);
+        requests[index].complete = true;
+    }
+
+    function getRequestsCount() public view returns (uint256) {
+        return requests.length;
+    }
+
+    function isDonor() public view returns (bool) {
+        return approvers[msg.sender];
     }
 }
