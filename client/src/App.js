@@ -7,8 +7,6 @@ import CreateCampaign from './components/CreateCampaign/CreateCampaign';
 
 import FactoryContract from "./contracts/FundraiserFactory.json";
 import getWeb3 from "./getWeb3";
-import { useDarkMode } from './Hooks/useDarkMode';
-import { MuiThemeProvider } from '@material-ui/core';
 import Navbar from './components/Navbar/Navbar';
 import HomePage from './components/HomePage/HomePage';
 import  WithDrawalRequest from './components/WithDrawals/WithDrawalRequest';
