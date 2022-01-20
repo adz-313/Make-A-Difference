@@ -45,7 +45,7 @@ const App = () => {
             {/* <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} /> */}
             <Route path="/home" exact component={() => <HomePage web3={web3} />} />
             <Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
-            <Route path="/fundraiser/:id/withdrawal/new" exact component={WithDrawalRequest} />
+            <Route path="/fundraiser/:id/withdrawal/new" exact component={() => <WithDrawalRequest web3={web3} />} />
             <Route path="/fundraiser/:id/allrequests" exact component={ViewWithDrawalRequests} />
           </Switch>
         </Container>

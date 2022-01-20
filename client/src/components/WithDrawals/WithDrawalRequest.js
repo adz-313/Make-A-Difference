@@ -1,5 +1,8 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Box, Button, Container, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
+
+import FundraiserContract from "../../contracts/Fundraiser.json";
 
 
 const initialState = {
@@ -7,23 +10,68 @@ const initialState = {
     amount: '',
 }
 
-const WithDrawalRequest = () => {
+const WithDrawalRequest = ({ web3 }) => {
 
     const [formData, setFormData] = useState(initialState);
+    const params = useParams();
+
+    const [instance, setInstance] = useState(null);
+    const [accounts, setAccounts] = useState(null);
+    const [totalDonations, setTotalDonations] = useState(null);
+    const [isOwner, setIsOwner] = useState(false);
+    const [isApprover, setIsApprover] = useState(false);
+    const [requests, setRequests] = useState(false);
 
     const [ currency, setCurrency] = useState("INR");
+
+    const init = async (fundraiser) => {
+        try {
+            const instance = new web3.eth.Contract(
+                FundraiserContract.abi,
+                fundraiser
+            );
+            // const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
+
+            const accounts = await web3.eth.getAccounts();
+            console.log(instance.methods);
+            
+            const eth = web3.utils.fromWei(totalDonations, 'ether')
+            setTotalDonations(eth);
+
+            const isOwner = await instance.methods.owner().call();
+
+            if(isOwner === accounts[0]) {
+                setIsOwner(true)
+            }
+
+            const isApprover = await instance.methods.approvers(accounts[0]).call();
+            setIsApprover(isApprover);
+            
+            const count = await instance.methods.getRequestsCount().call();
+            for(let i=0; i<count; i++) {
+                const req = await instance.methods.requests(i).call();
+                setRequests(requests => [ ...requests, req]);
+            }
+
+          }
+        catch(error) {
+        alert(
+            `Failed to load web3, accounts, or contract. Check console for details. ${error}`,
+        );
+        console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        if(web3 && params.id) init(params.id)
+    },[])
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name] : e.target.value });
     }
 
-    const withdrawalFunds = async () => {
-        const val = web3.utils.toWei(totalDonations.toString());
-        const x = await instance.methods.withdraw().send({
-          from: accounts[0],
-        })
-        console.log(x)
-        alert(`Funds Withdrawn!`)
+    const handleSubmit = () => {
+        console.log(instance);
     }
 
     return (
@@ -93,7 +141,7 @@ const WithDrawalRequest = () => {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            color="primary"
+                            onClick={handleSubmit}
                         >
                             Submit
                         </Button>
