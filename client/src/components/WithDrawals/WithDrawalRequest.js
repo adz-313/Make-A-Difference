@@ -5,7 +5,6 @@ import { Box, Button, Container, FormControl, InputLabel, MenuItem, Paper, Selec
 const initialState = {
     description: '',
     amount: '',
-    address: ''
 }
 
 const WithDrawalRequest = () => {
@@ -18,7 +17,14 @@ const WithDrawalRequest = () => {
         setFormData({ ...formData, [e.target.name] : e.target.value });
     }
 
-    console.log("IN Withdrawal Request")
+    const withdrawalFunds = async () => {
+        const val = web3.utils.toWei(totalDonations.toString());
+        const x = await instance.methods.withdraw().send({
+          from: accounts[0],
+        })
+        console.log(x)
+        alert(`Funds Withdrawn!`)
+    }
 
     return (
         <Container component="main" maxWidth="sm">
@@ -71,7 +77,7 @@ const WithDrawalRequest = () => {
                             </Select>
                         </FormControl>
 
-                        <TextField
+                        {/* <TextField
                             variant="outlined"
                             margin="normal"
                             required
@@ -81,7 +87,7 @@ const WithDrawalRequest = () => {
                             id="address"
                             value={formData.address}
                             onChange={handleChange}
-                        />
+                        /> */}
 
                         <Button
                             type="submit"

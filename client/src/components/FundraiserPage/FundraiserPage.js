@@ -7,7 +7,7 @@ import { Typography, TextField, Button, Grid, FormControl, InputLabel, Select, M
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { grey } from '@mui/material/colors';
-import WithDrawalRequest from '../WithDrawals/WithDrawalRequest';
+
 const cc = require('cryptocompare');
 
 
@@ -233,6 +233,8 @@ const FundraiserPage = ({ web3 }) => {
                                             fullWidth
                                             variant="outlined"
                                             color="primary"
+                                            component={Link}
+                                            to={`/fundraiser/${params.id}/allrequests`}
                                         >
                                             View WithDrawal Requests
                                         </Button>

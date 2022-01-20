@@ -1,6 +1,9 @@
 import { Box, Button, Grid, Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { cyan } from '@mui/material/colors';
 import React from 'react';
+import WithDrawalRequest from '../WithDrawals/WithDrawalRequest';
+import { Link, useParams } from 'react-router-dom';
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -24,6 +27,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const ViewWithDrawalRequests = () => {
 
+    const params = useParams();
+
     return (
         <Box
             sx={{
@@ -39,6 +44,8 @@ const ViewWithDrawalRequests = () => {
                     <Grid item>
                         <Button
                             variant="contained"
+                            component={Link}
+                            to={`/fundraiser/${params.id}/withdrawal/new`}
                         >Add WithDrawal Request</Button>
                     </Grid>
                 </Grid>
