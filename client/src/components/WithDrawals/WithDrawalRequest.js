@@ -64,7 +64,22 @@ const WithDrawalRequest = ({ web3 }) => {
 
     useEffect(() => {
         if(web3 && params.id) init(params.id)
-    },[])
+    },[]);
+
+    const createRequest = async () => {
+        request.recipient = beneficiary;
+        const ethTotal = request.value/ exchangeRate[currency];
+        const withdrawAmount = web3.utils.toWei(ethTotal.toFixed(18).toString());
+        await instance.methods.createRequest(
+            request.description,
+            withdrawAmount,
+            request.recipient
+        ).send({ from: accounts[0] });
+    }
+
+    const approveRequest = async index => {
+        await instance.methods.approveRequest(index).send({ from: accounts[0] });
+    }
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name] : e.target.value });
