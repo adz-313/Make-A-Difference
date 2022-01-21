@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Button, Container, FormControl, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
-
 import FundraiserContract from "../../contracts/Fundraiser.json";
+const cc = require('cryptocompare');
 
 
 const initialState = {
@@ -21,8 +21,14 @@ const WithDrawalRequest = ({ web3 }) => {
     const [isOwner, setIsOwner] = useState(false);
     const [isApprover, setIsApprover] = useState(false);
     const [requests, setRequests] = useState(false);
-
     const [ currency, setCurrency] = useState("INR");
+    const [ beneficiary, setBeneficiary] = useState(null);
+    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [request, setRequest] = useState({
+        description: '',
+        value: '',
+        recipient: ''
+    });
 
     const init = async (fundraiser) => {
         try {
@@ -30,10 +36,12 @@ const WithDrawalRequest = ({ web3 }) => {
                 FundraiserContract.abi,
                 fundraiser
             );
-            // const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
-
+            const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
             const accounts = await web3.eth.getAccounts();
-            console.log(instance.methods);
+
+            setInstance(instance);
+            setAccounts(accounts);
+            setExchangeRate(exchangeRate);
             
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);

@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import getWeb3 from '../../getWeb3';
-import Web3 from 'web3';
 import FundraiserContract from "../../contracts/Fundraiser.json";
 import { Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { grey } from '@mui/material/colors';
-
+import WithDrawalRequest from '../WithDrawals/WithDrawalRequest';
 const cc = require('cryptocompare');
 
 
@@ -112,51 +110,8 @@ const FundraiserPage = ({ web3 }) => {
         })
     }
 
-    const withdrawalFunds = async () => {
-        const val = web3.utils.toWei(totalDonations.toString());
-        const x = await instance.methods.withdraw().send({
-          from: accounts[0],
-        })
-        console.log(x)
-        alert(`Funds Withdrawn!`)
-    }
-
     return (
-        // <div>
-        //     <Grid container direction="row" marginTop="1rem">
-        //         <Grid md={6} lg={4}>
-        //             <img src={imageURL} height={250}/>
-        //         </Grid>
-        //         <Grid md={6} lg={8}>
-        //             <Typography variant="h3">{fundName}</Typography>
-        //             <Typography variant="body2" color="textSecondary" component="p">{ description }</Typography>
-        //             <Typography variant="h5" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
-        //         </Grid>
-        //     </Grid>
-        //     <TextField sx={{mt: 3}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
-        //     <FormControl sx={{width: 150}}>
-        //         <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-        //         <Select
-        //             label="Currency"
-        //             onChange={(e) => setCurrency(e.target.value)}
-        //             value={currency}
-        //         >
-        //             <MenuItem value={'INR'}>INR</MenuItem>
-        //             <MenuItem value={"USD"}>USD</MenuItem>
-        //         </Select>
-        //     </FormControl>
-        //     <Button sx={{mt: 3}} variant="outlined" onClick={() => donate()}>Submit</Button>
-        //     {isOwner &&
-        //         <Button
-        //             variant="contained"
-        //             color="primary"
-        //             onClick={withdrawalFunds}
-        //         >
-        //             Withdrawal
-        //         </Button>
-        //     }
-        // </div>
-        <Container>
+       <Container>
             <Box
                 sx={{
                     flexGrow: 1,
@@ -183,21 +138,28 @@ const FundraiserPage = ({ web3 }) => {
                                 }}
                             >
                                 <CardContent>
-                                    <Typography color="text.primary" variant="h5" component="div">{exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of {target} {currency === 'INR' ? '₹' : '$'}</Typography>
+                                    <Typography color="text.primary" variant="h5" component="div">$125 raised out of $500</Typography>
                                     <BorderLinearProgress variant="determinate" value={30} />
                                 </CardContent>
-                                <TextField onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
-                                <FormControl sx={{width: 150}}>
-                                    <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-                                    <Select
-                                        label="Currency"
-                                        onChange={(e) => setCurrency(e.target.value)}
-                                        value={currency}
-                                    >
-                                        <MenuItem value={'INR'}>INR</MenuItem>
-                                        <MenuItem value={"USD"}>USD</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                <CardHeader 
+                                    avatar={
+                                        <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                            A
+                                        </Avatar>
+                                    }
+                                    title="Alex"
+                                    subheader="$20"
+                                />
+                                <hr/>
+                                <CardHeader 
+                                    avatar={
+                                        <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                            A
+                                        </Avatar>
+                                    }
+                                    title="Tom"
+                                    subheader="$40"
+                                />
                                 <CardActions>
                                    
                                         {
@@ -233,8 +195,6 @@ const FundraiserPage = ({ web3 }) => {
                                             fullWidth
                                             variant="outlined"
                                             color="primary"
-                                            component={Link}
-                                            to={`/fundraiser/${params.id}/allrequests`}
                                         >
                                             View WithDrawal Requests
                                         </Button>
