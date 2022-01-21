@@ -138,10 +138,10 @@ const FundraiserPage = ({ web3 }) => {
                                 }}
                             >
                                 <CardContent>
-                                    <Typography color="text.primary" variant="h5" component="div">$125 raised out of $500</Typography>
+                                    <Typography color="text.primary" variant="h5" component="div">{totalDonations} raised out of {target}</Typography>
                                     <BorderLinearProgress variant="determinate" value={30} />
                                 </CardContent>
-                                <CardHeader 
+                                {/* <CardHeader 
                                     avatar={
                                         <Avatar sx={{ bgcolor: grey }} aria-label="user">
                                             A
@@ -159,7 +159,19 @@ const FundraiserPage = ({ web3 }) => {
                                     }
                                     title="Tom"
                                     subheader="$40"
-                                />
+                                /> */}
+                                <TextField variant="standard" sx={{mt: 3, width: '70%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                                <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
+                                    <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                                    <Select
+                                        label="Currency"
+                                        onChange={(e) => setCurrency(e.target.value)}
+                                        value={currency}
+                                    >
+                                        <MenuItem value={'INR'}>INR</MenuItem>
+                                        <MenuItem value={"USD"}>USD</MenuItem>
+                                    </Select>
+                                </FormControl>
                                 <CardActions>
                                    
                                         {
