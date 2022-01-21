@@ -138,7 +138,7 @@ const FundraiserPage = ({ web3 }) => {
                                 }}
                             >
                                 <CardContent>
-                                    <Typography color="text.primary" variant="h5" component="div">{totalDonations} raised out of {target}</Typography>
+                                    <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of {target}</Typography>
                                     <BorderLinearProgress variant="determinate" value={30} />
                                 </CardContent>
                                 {/* <CardHeader 
@@ -207,6 +207,8 @@ const FundraiserPage = ({ web3 }) => {
                                             fullWidth
                                             variant="outlined"
                                             color="primary"
+                                            component={Link}
+                                            to={`/fundraiser/${params.id}/allrequests`}
                                         >
                                             View WithDrawal Requests
                                         </Button>

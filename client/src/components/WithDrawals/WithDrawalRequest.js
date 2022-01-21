@@ -4,15 +4,8 @@ import { Box, Button, Container, FormControl, InputLabel, MenuItem, Paper, Selec
 import FundraiserContract from "../../contracts/Fundraiser.json";
 const cc = require('cryptocompare');
 
-
-const initialState = {
-    description: '',
-    amount: '',
-}
-
 const WithDrawalRequest = ({ web3 }) => {
 
-    const [formData, setFormData] = useState(initialState);
     const params = useParams();
 
     const [instance, setInstance] = useState(null);
@@ -21,9 +14,9 @@ const WithDrawalRequest = ({ web3 }) => {
     const [isOwner, setIsOwner] = useState(false);
     const [isApprover, setIsApprover] = useState(false);
     const [requests, setRequests] = useState(false);
-    const [ currency, setCurrency] = useState("INR");
-    const [ beneficiary, setBeneficiary] = useState(null);
-    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [currency, setCurrency] = useState("INR");
+    const [beneficiary, setBeneficiary] = useState(null);
+    const [exchangeRate, setExchangeRate ] = useState(null);
     const [request, setRequest] = useState({
         description: '',
         value: '',
@@ -38,13 +31,12 @@ const WithDrawalRequest = ({ web3 }) => {
             );
             const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
             const accounts = await web3.eth.getAccounts();
+            const beneficiary = await instance.methods.beneficiary().call();
 
             setInstance(instance);
             setAccounts(accounts);
             setExchangeRate(exchangeRate);
-            
-            const eth = web3.utils.fromWei(totalDonations, 'ether')
-            setTotalDonations(eth);
+            setBeneficiary(beneficiary);
 
             const isOwner = await instance.methods.owner().call();
 
@@ -54,12 +46,6 @@ const WithDrawalRequest = ({ web3 }) => {
 
             const isApprover = await instance.methods.approvers(accounts[0]).call();
             setIsApprover(isApprover);
-            
-            const count = await instance.methods.getRequestsCount().call();
-            for(let i=0; i<count; i++) {
-                const req = await instance.methods.requests(i).call();
-                setRequests(requests => [ ...requests, req]);
-            }
 
           }
         catch(error) {
@@ -74,15 +60,17 @@ const WithDrawalRequest = ({ web3 }) => {
         if(web3 && params.id) init(params.id)
     },[]);
 
-    const createRequest = async () => {
+    const createRequest = async e => {
+        e.preventDefault();
         request.recipient = beneficiary;
         const ethTotal = request.value/ exchangeRate[currency];
         const withdrawAmount = web3.utils.toWei(ethTotal.toFixed(18).toString());
-        await instance.methods.createRequest(
-            request.description,
-            withdrawAmount,
-            request.recipient
-        ).send({ from: accounts[0] });
+        // await instance.methods.createRequest(
+        //     request.description,
+        //     withdrawAmount,
+        //     request.recipient
+        // ).send({ from: accounts[0] });
+        console.log(request, accounts[0]);
     }
 
     const approveRequest = async index => {
@@ -90,11 +78,7 @@ const WithDrawalRequest = ({ web3 }) => {
     }
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name] : e.target.value });
-    }
-
-    const handleSubmit = () => {
-        console.log(instance);
+        setRequest({ ...request, [e.target.name] : e.target.value });
     }
 
     return (
@@ -121,7 +105,7 @@ const WithDrawalRequest = ({ web3 }) => {
                             rows={4}
                             fullWidth
                             name="description"
-                            value={formData.description}
+                            value={request.description}
                             label="Request Description"
                             id="description"
                             onChange={handleChange}   
@@ -129,8 +113,8 @@ const WithDrawalRequest = ({ web3 }) => {
 
                         <TextField 
                             sx={{mt: 3}}
-                            value={formData.amount} 
-                            name="amount"
+                            // value={request.value} 
+                            name="value"
                             onChange={handleChange} 
                             label={`Donation in ${currency}`} 
                             size="small" 
@@ -164,7 +148,7 @@ const WithDrawalRequest = ({ web3 }) => {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            onClick={handleSubmit}
+                            onClick={e => createRequest(e)}
                         >
                             Submit
                         </Button>
