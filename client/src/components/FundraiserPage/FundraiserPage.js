@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import FundraiserContract from "../../contracts/Fundraiser.json";
-import { Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
+import { Paper, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { grey } from '@mui/material/colors';
@@ -59,6 +59,8 @@ const FundraiserPage = ({ web3 }) => {
             const beneficiary = await instance.methods.beneficiary().call();
 
             setDonationsCount(donationsCount);
+
+            console.log(parseFloat(target)+1);
             
             setExchangeRate(exchangeRate);
             setAccounts(accounts);
@@ -67,14 +69,15 @@ const FundraiserPage = ({ web3 }) => {
             setDescription(description);
             setImageURL(imageURL);
             setBeneficiary(beneficiary);
-            setTarget(target);
+            // target = web3.utils.fromWei(target, 'ether');
+            setTarget(parseFloat(web3.utils.fromWei(target, 'ether')));
             
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
-            const isOwner = await instance.methods.owner().call();
-
-            if(isOwner === accounts[0]) {
+            const owner = await instance.methods.owner().call();
+            console.log(owner);
+            if(owner === accounts[0]) {
                 setIsOwner(true)
             }
 
@@ -138,8 +141,8 @@ const FundraiserPage = ({ web3 }) => {
                                 }}
                             >
                                 <CardContent>
-                                    <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of {target}</Typography>
-                                    <BorderLinearProgress variant="determinate" value={30} />
+                                    <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                                    {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
                                 </CardContent>
                                 {/* <CardHeader 
                                     avatar={
@@ -173,17 +176,17 @@ const FundraiserPage = ({ web3 }) => {
                                     </Select>
                                 </FormControl>
                                 <CardActions>
-                                   
-                                        {
-                                            !isOwner &&
-                                            <Button
-                                                fullWidth
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => donate()}
-                                            >Donate Now
-                                            </Button>
-                                        }
+                                    {
+                                        !isOwner && 
+                                        <Button
+                                            fullWidth
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => donate()}
+                                        >
+                                            Donate Now
+                                        </Button>
+                                    }
                                     
                                 </CardActions>
                                 <CardActions>
@@ -229,6 +232,48 @@ const FundraiserPage = ({ web3 }) => {
                 </Grid>
             </Box>
         </Container>
+    // <div>
+    //         <Grid container direction="row" marginTop="1rem">
+    //             <Grid item sx={{padding: 2}} md={6} lg={8}>
+    //                 <img src={imageURL} height={250} style={{'marginLeft': '17rem', 'marginTop': '2rem', 'marginBottom': '2rem'}}/>
+    //                 <Typography variant="h4">{fundName}</Typography>
+    //                 <Typography sx={{mt: 1, mb: 1}} variant="body2" color="textSecondary" component="p">{ description }</Typography>
+    //                 <Typography sx={{color: '#3d5afe'}} variant="h6" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+    //                 <Typography variant="h6" color="textSecondary" component="h5">Target: { target }</Typography>
+    //             </Grid>
+    //             <Grid item md={6} lg={4} >
+    //                 <Paper sx={{padding: 2}}>
+    //                     {isOwner ? 
+    //                         <Button
+    //                             variant="contained"
+    //                             color="primary"
+    //                             // onClick={createRequest}
+    //                             sx={{mt: 3, width: '90%', ml: 3}}
+    //                         >
+    //                             Create Request
+    //                         </Button> :
+    //                         <>
+    //                             { console.log(accounts) }
+    //                             <Typography variant='h6'>Donate Now</Typography>
+    //                             <TextField variant="standard" sx={{mt: 3, width: '70%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+    //                             <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
+    //                                 <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+    //                                 <Select
+    //                                     label="Currency"
+    //                                     onChange={(e) => setCurrency(e.target.value)}
+    //                                     value={currency}
+    //                                 >
+    //                                     <MenuItem value={'INR'}>INR</MenuItem>
+    //                                     <MenuItem value={"USD"}>USD</MenuItem>
+    //                                 </Select>
+    //                             </FormControl>
+    //                             <Button sx={{mt: 3, width: '90%', ml: 3}} variant="outlined" onClick={() => donate()}>Submit</Button>
+    //                         </>
+    //                     }
+    //                 </Paper>
+    //             </Grid>
+    //         </Grid>
+    //     </div>
     )
 }
 

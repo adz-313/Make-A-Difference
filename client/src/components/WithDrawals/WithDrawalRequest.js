@@ -65,12 +65,11 @@ const WithDrawalRequest = ({ web3 }) => {
         request.recipient = beneficiary;
         const ethTotal = request.value/ exchangeRate[currency];
         const withdrawAmount = web3.utils.toWei(ethTotal.toFixed(18).toString());
-        // await instance.methods.createRequest(
-        //     request.description,
-        //     withdrawAmount,
-        //     request.recipient
-        // ).send({ from: accounts[0] });
-        console.log(request, accounts[0]);
+        await instance.methods.createRequest(
+            request.description,
+            withdrawAmount,
+            request.recipient
+        ).send({ from: accounts[0] });
     }
 
     const approveRequest = async index => {

@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {Container, TextField, Button, Link, Grid, Typography, Box} from '@mui/material'
+import {Container, TextField, Button, Link, Grid, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
 import FactoryContract from "../../contracts/FundraiserFactory.json";
+const cc = require('cryptocompare');
 
 const initialState = {
     name: '',
@@ -12,11 +13,11 @@ const initialState = {
 
 const CreateCampaign = ({ web3}) => {
 
-
     const [formData, setFormData] = useState(initialState);
-
     const [instance, setInstance] = useState(null);  
     const [accounts, setAccounts] = useState(null); 
+    const [currency, setCurrency] = useState('INR');
+    const [ exchangeRate, setExchangeRate ] = useState(null);
     
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,8 +39,9 @@ const CreateCampaign = ({ web3}) => {
         setInstance(instance);
         setAccounts(accounts);
         
-        console.log(instance);
-        console.log(accounts);
+        const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
+        setExchangeRate(exchangeRate);
+
 
       } catch(error) {
         alert(`Failed to load web3, accounts, or contract. Check console for details.`,);
@@ -61,22 +63,17 @@ const CreateCampaign = ({ web3}) => {
   }
 
   const createFundraiser = async (e) => {
-
     e.preventDefault();
+    const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
+    //const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
 
     await instance.methods.createFundraiser(
       formData.name,
       formData.imageUrl,
       formData.description,
-      formData.targetToAchieve,
+      ethTotal,
       formData.beneficiary
     ).send({ from: accounts[0] })
-
-    console.log(formData.name);
-    console.log(formData.imageUrl);
-    console.log(formData.description);
-    console.log(formData.targetToAchieve);
-    console.log(formData.beneficiary);
 
     alert('Successfully created fundraiser')
     clear()
@@ -155,14 +152,26 @@ const CreateCampaign = ({ web3}) => {
                         id="targetToAchieve"
                         value={formData.targetToAchieve}
                         onChange={handleChange}
+                        sx={{mt: 2, width: '70%', mb: 2}}
                     />
+                    <FormControl sx={{width: '25%', ml: 2, mt: 2, mb: 2}}>
+                        <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                        <Select
+                            label="Currency"
+                            onChange={(e) => setCurrency(e.target.value)}
+                            value={currency}
+                        >
+                            <MenuItem value={'INR'}>INR</MenuItem>
+                            <MenuItem value={"USD"}>USD</MenuItem>
+                        </Select>
+                    </FormControl>
 
                     <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                       onClick={(e) => createFundraiser(e)}
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      onClick={(e) => createFundraiser(e)}
                     >
                         Submit
                     </Button>
