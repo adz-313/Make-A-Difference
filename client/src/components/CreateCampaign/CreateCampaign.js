@@ -71,7 +71,8 @@ const CreateCampaign = ({ web3}) => {
       formData.name,
       formData.imageUrl,
       formData.description,
-      ethTotal,
+      formData.targetToAchieve,
+      //ethTotal,
       formData.beneficiary
     ).send({ from: accounts[0] })
 

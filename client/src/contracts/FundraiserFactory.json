@@ -10721,12 +10721,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x6C32d864778a77152e1a26FE3f6CC38565E31701",
-      "transactionHash": "0x4292fdf5fb0b5fac930d8cbd6f88da629197482a0dbe4d528d89fb7237ea4bb9"
+      "address": "0x42FEfCCF8c06dF810030E67f49fD8FAde0502645",
+      "transactionHash": "0xfcb8193ae191ffd4a108c1b355679ff2443407b48144dbb25d6989e8c6090c69"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2022-01-21T06:49:16.423Z",
+  "updatedAt": "2022-01-24T03:52:16.089Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
