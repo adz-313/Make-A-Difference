@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {Container, TextField, Button, Link, Grid, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
 import FactoryContract from "../../contracts/FundraiserFactory.json";
+import { createDrive, getDrives } from '../../api/index';
+
+
 const cc = require('cryptocompare');
 
 const initialState = {
@@ -65,19 +68,41 @@ const CreateCampaign = ({ web3}) => {
   const createFundraiser = async (e) => {
     e.preventDefault();
     const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
-    //const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
+    const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
 
     await instance.methods.createFundraiser(
       formData.name,
       formData.imageUrl,
       formData.description,
-      formData.targetToAchieve,
-      //ethTotal,
+      amountToRaise,
       formData.beneficiary
-    ).send({ from: accounts[0] })
+    ).send({ from: accounts[0] });
 
-    alert('Successfully created fundraiser')
-    clear()
+    let exp_amt = 0;
+    if(currency !== 'INR') {
+      exp_amt = ethTotal * exchangeRate['INR'];
+      exp_amt = exp_amt.toFixed(0);
+    } else {
+      exp_amt = formData.targetToAchieve;
+    }
+
+    const serverDrive = {
+      name: formData.name,
+      description: formData.description,
+      expected_amount: exp_amt,
+      amount_raised: 0,
+      donation_count: 0,
+      owner_id: accounts[0],
+      status: 0,
+      category: 0,
+      imageUrl: formData.imageUrl,
+      state: "Maharashtra",
+      size: 0
+    }
+    console.log(serverDrive);
+    await createDrive(serverDrive);
+    alert('Successfully created fundraiser');
+    clear();
   }
 
     return (
