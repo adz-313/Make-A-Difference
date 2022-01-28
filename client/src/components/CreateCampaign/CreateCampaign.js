@@ -70,13 +70,15 @@ const CreateCampaign = ({ web3}) => {
     const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
     const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
 
-    await instance.methods.createFundraiser(
+    const resp = await instance.methods.createFundraiser(
       formData.name,
       formData.imageUrl,
       formData.description,
       amountToRaise,
       formData.beneficiary
     ).send({ from: accounts[0] });
+    console.log(resp.events.FundraiserCreated.returnValues.fundraiser);
+    console.log(resp);
 
     let exp_amt = 0;
     if(currency !== 'INR') {
@@ -99,8 +101,7 @@ const CreateCampaign = ({ web3}) => {
       state: "Maharashtra",
       size: 0
     }
-    console.log(serverDrive);
-    await createDrive(serverDrive);
+    // await createDrive(serverDrive);
     alert('Successfully created fundraiser');
     clear();
   }

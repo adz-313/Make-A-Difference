@@ -110,7 +110,8 @@ const FundraiserPage = ({ web3 }) => {
             from: accounts[0],
             value: donation,
             gas: 650000
-        })
+        });
+        
     }
 
     return (
@@ -163,7 +164,7 @@ const FundraiserPage = ({ web3 }) => {
                                     title="Tom"
                                     subheader="$40"
                                 /> */}
-                                <TextField variant="standard" sx={{mt: 3, width: '70%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                                <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
                                 <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
                                     <InputLabel id="demo-simple-select-label">Currency</InputLabel>
                                     <Select
