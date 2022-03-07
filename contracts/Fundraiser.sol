@@ -18,6 +18,7 @@ contract Fundraiser is Ownable {
         address payable recipient;
         bool complete;
         uint256 approvalCount;
+        uint256 rejectionCount;
         mapping(address => bool) approvals;
     }
 
@@ -121,6 +122,7 @@ contract Fundraiser is Ownable {
         newRequest.recipient = _recipient;
         newRequest.complete = false;
         newRequest.approvalCount = 0;
+        newRequest.rejectionCount = 0;
     }
 
     function approveRequest(uint256 index) public {
@@ -129,6 +131,14 @@ contract Fundraiser is Ownable {
 
         requests[index].approvals[msg.sender] = true;
         requests[index].approvalCount++;
+    }
+
+    function rejectRequest(uint256 index) public {
+        require(approvers[msg.sender]);
+        require(!requests[index].approvals[msg.sender]);
+
+        requests[index].approvals[msg.sender] = false;
+        requests[index].rejectionCount++;
     }
 
     function finalizeRequest(uint256 index) public onlyOwner {

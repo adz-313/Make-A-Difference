@@ -1,9 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import FundraiserContract from "../../contracts/Fundraiser.json";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-
-import { useParams } from 'react-router-dom';
+import { Paper, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { grey } from '@mui/material/colors';
+import WithDrawalRequest from '../WithDrawals/WithDrawalRequest';
 const cc = require('cryptocompare');
+
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    height: 10,
+    borderRadius: 5,
+    [`&.${linearProgressClasses.colorPrimary}`]: {
+      backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+    },
+    [`& .${linearProgressClasses.bar}`]: {
+      borderRadius: 5,
+      backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+    },
+  }));
+
 
 const FundraiserPage = ({ web3 }) => {
     const params = useParams();
@@ -24,12 +41,6 @@ const FundraiserPage = ({ web3 }) => {
     const [ isApprover, setIsApprover ] = useState(true);
     const [ requests, setRequests ] = useState([]);
 
-    const [request, setRequest] = useState({
-        description: '',
-        value: '',
-        recipient: ''
-    });
-
     const init = async (fundraiser) => {
         try {
             const instance = new web3.eth.Contract(
@@ -47,8 +58,7 @@ const FundraiserPage = ({ web3 }) => {
             const donationsCount = await instance.methods.donationsCount().call();
             const beneficiary = await instance.methods.beneficiary().call();
 
-            setDonationsCount(donationsCount);
-            
+            setDonationsCount(donationsCount);            
             setExchangeRate(exchangeRate);
             setAccounts(accounts);
             setInstance(instance);
@@ -56,14 +66,14 @@ const FundraiserPage = ({ web3 }) => {
             setDescription(description);
             setImageURL(imageURL);
             setBeneficiary(beneficiary);
-            setTarget(target);
+            // target = web3.utils.fromWei(target, 'ether');
+            setTarget(parseFloat(web3.utils.fromWei(target, 'ether')));
             
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
-            const isOwner = await instance.methods.owner().call();
-
-            if(isOwner === accounts[0]) {
+            const owner = await instance.methods.owner().call();
+            if(owner === accounts[0]) {
                 setIsOwner(true)
             }
 
@@ -97,13 +107,7 @@ const FundraiserPage = ({ web3 }) => {
             value: donation,
             gas: 650000
         });
-    }
-
-    const withdrawFunds = async index => {
-        const x = await instance.methods.finalizeRequest(index).send({
-          from: accounts[0],
-        });
-        alert(`Funds Withdrawn!`)
+        
     }
 
     const createRequest = async () => {
@@ -122,75 +126,157 @@ const FundraiserPage = ({ web3 }) => {
     }
 
     return (
-        <div>
-            <Grid container direction="row" marginTop="1rem">
-                <Grid item sx={{padding: 2}} md={6} lg={8}>
-                    <img src={imageURL} height={250} style={{'marginLeft': '17rem', 'marginTop': '2rem', 'marginBottom': '2rem'}}/>
-                    <Typography variant="h4">{fundName}</Typography>
-                    <Typography sx={{mt: 1, mb: 1}} variant="body2" color="textSecondary" component="p">{ description }</Typography>
-                    <Typography sx={{color: '#3d5afe'}} variant="h6" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
-                    <Typography variant="h6" color="textSecondary" component="h5">Target: { target }</Typography>
-                </Grid>
-                <Grid item md={6} lg={4} >
-                    <Paper sx={{padding: 2}}>
-                        <Typography variant='h6'>Donate Now</Typography>
-                        <TextField variant="standard" sx={{mt: 3, width: '70%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
-                        <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
-                            <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-                            <Select
-                                label="Currency"
-                                onChange={(e) => setCurrency(e.target.value)}
-                                value={currency}
-                            >
-                                <MenuItem value={'INR'}>INR</MenuItem>
-                                <MenuItem value={"USD"}>USD</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <Button sx={{mt: 3, width: '90%', ml: 3}} variant="outlined" onClick={() => donate()}>Submit</Button>
-                    </Paper>
-                    {isOwner &&
-                        <Paper sx={{padding: 2, mt: 2}}>
-                            <Typography variant='h6'>Withdraw Request</Typography>
-                            <TextField fullWidth variant="standard" onChange={(e) => setRequest({...request, description: e.target.value})} label='Description' />
-                            <TextField fullWidth variant="standard" onChange={(e) => setRequest({...request, value: e.target.value})} label='Value' />
+        <Grid container>
+            <Grid item xs={12} lg={8} sx={{ marginTop: '5rem', marginBottom: '1rem'}}>
+                <Typography variant="h3" sx={{ marginBottom: '1rem'}}>{fundName}</Typography>
+                <Box sx={{
+                    width: '50%',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                }}>
+                    <img src={imageURL} width='100%' />
+                </Box>
+                <Typography variant="body1" color="textprimary" marginTop="1rem">{ description }</Typography>
+            </Grid>
+            <Grid item xs={12} lg={4} sx={{ marginTop: '2rem', marginBottom: '1rem'}}>
+                <Card
+                    sx={{
+                        marginTop: '70px',
+                        border: '1px solid #000',
+                        width: '100%'
+                    }}
+                >
+                    <CardContent>
+                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                        {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
+                    </CardContent>
+                    {/* <CardHeader 
+                        avatar={
+                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                A
+                            </Avatar>
+                        }
+                        title="Alex"
+                        subheader="$20"
+                    />
+                    <hr/>
+                    <CardHeader 
+                        avatar={
+                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                A
+                            </Avatar>
+                        }
+                        title="Tom"
+                        subheader="$40"
+                    /> */}
+                    <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                    <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
+                        <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                        <Select
+                            label="Currency"
+                            onChange={(e) => setCurrency(e.target.value)}
+                            value={currency}
+                        >
+                            <MenuItem value={'INR'}>INR</MenuItem>
+                            <MenuItem value={"USD"}>USD</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <CardActions>
+                        {
+                            !isOwner && 
                             <Button
+                                fullWidth
                                 variant="contained"
                                 color="primary"
-                                onClick={createRequest}
-                                sx={{mt: 3, width: '90%', ml: 3}}
+                                onClick={() => donate()}
                             >
-                                Create Request
+                                Donate Now
                             </Button>
-                        </Paper>
-                    }
-                </Grid>
+                        }
+                        
+                    </CardActions>
+                    <CardActions>
+                        
+                            {
+                                isOwner &&
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
+                                >
+                                    Withdraw
+                                </Button>
+                            }
+                        
+                        </CardActions>
+                        <CardActions>
+                        <div>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                color="primary"
+                                component={Link}
+                                to={`/fundraiser/${params.id}/allrequests`}
+                            >
+                                View WithDrawal Requests
+                            </Button>
+                        </div>
+                        <div>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                color="primary"
+                            >See All Donations</Button>
+                        </div>
+
+                    </CardActions>
+
+                </Card>
             </Grid>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                    <TableRow>
-                        <TableCell>Description</TableCell>
-                        <TableCell align="right">Value</TableCell>
-                        <TableCell align="right">Approver Count</TableCell>
-                        <TableCell align="right">Complete</TableCell>
-                        <TableCell align="right">Approve</TableCell>
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {requests ? requests.map((req, index) => (
-                            <TableRow>
-                                <TableCell>{req.description }</TableCell>
-                                <TableCell align="right">{exchangeRate ? (web3.utils.fromWei(req.value, 'ether') * exchangeRate[currency]).toFixed(0) : 'Loading...'}</TableCell>
-                                <TableCell align="right">{req.approvalCount}</TableCell>
-                                <TableCell align="right">{req.complete ? 'Completed' : 'Pending'}</TableCell>
-                                {isApprover && <TableCell align="right"><Button disabled={!isApprover || req.complete} variant="contained" onClick={() => approveRequest(index)}>Approve</Button></TableCell>}
-                                {isOwner && <TableCell align="right"><Button disabled={(donationsCount && req.approvalCount < donationsCount/2) || req.complete} variant="contained" onClick={() => withdrawFunds(index)}>Withdraw</Button></TableCell>}
-                            </TableRow>
-                        )) : 'Loading...'}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </div>
+        </Grid>
+    // <div>
+    //         <Grid container direction="row" marginTop="1rem">
+    //             <Grid item sx={{padding: 2}} md={6} lg={8}>
+    //                 <img src={imageURL} height={250} style={{'marginLeft': '17rem', 'marginTop': '2rem', 'marginBottom': '2rem'}}/>
+    //                 <Typography variant="h4">{fundName}</Typography>
+    //                 <Typography sx={{mt: 1, mb: 1}} variant="body2" color="textSecondary" component="p">{ description }</Typography>
+    //                 <Typography sx={{color: '#3d5afe'}} variant="h6" color="textSecondary" component="h5">Total Money Raised: { exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+    //                 <Typography variant="h6" color="textSecondary" component="h5">Target: { target }</Typography>
+    //             </Grid>
+    //             <Grid item md={6} lg={4} >
+    //                 <Paper sx={{padding: 2}}>
+    //                     {isOwner ? 
+    //                         <Button
+    //                             variant="contained"
+    //                             color="primary"
+    //                             // onClick={createRequest}
+    //                             sx={{mt: 3, width: '90%', ml: 3}}
+    //                         >
+    //                             Create Request
+    //                         </Button> :
+    //                         <>
+    //                             { console.log(accounts) }
+    //                             <Typography variant='h6'>Donate Now</Typography>
+    //                             <TextField variant="standard" sx={{mt: 3, width: '70%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+    //                             <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
+    //                                 <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+    //                                 <Select
+    //                                     label="Currency"
+    //                                     onChange={(e) => setCurrency(e.target.value)}
+    //                                     value={currency}
+    //                                 >
+    //                                     <MenuItem value={'INR'}>INR</MenuItem>
+    //                                     <MenuItem value={"USD"}>USD</MenuItem>
+    //                                 </Select>
+    //                             </FormControl>
+    //                             <Button sx={{mt: 3, width: '90%', ml: 3}} variant="outlined" onClick={() => donate()}>Submit</Button>
+    //                         </>
+    //                     }
+    //                 </Paper>
+    //             </Grid>
+    //         </Grid>
+    //     </div>
     )
 }
 

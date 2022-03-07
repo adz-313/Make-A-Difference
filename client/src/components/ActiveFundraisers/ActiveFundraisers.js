@@ -3,11 +3,13 @@ import FundraiserCard from './FundraiserCard/FundraiserCard';
 import { Grid, Typography } from '@mui/material';
 import FactoryContract from "../../contracts/FundraiserFactory.json";
 
-
 const ActiveFundraisers = ({ web3 }) => {
+
+
     const [fundraisers, setFundraisers] = useState([]);  
     const [instance, setInstance] = useState(null);  
 
+    
     useEffect(() => {
         const init = async() => {
           try {
@@ -43,12 +45,12 @@ const ActiveFundraisers = ({ web3 }) => {
 
     return (
         <div>
-            <Typography variant="h5" margin="1rem 1rem">Active Fundraisers</Typography>
+            <Typography variant="h5" margin="1rem 0">Active Fundraisers</Typography>
             <Grid container spacing={3}>
             {
                 fundraisers.map((fundraiser) => {
                 return (
-                    <Grid key={fundraiser} item xs={12} sm={6} md={4} lg={3}>
+                    <Grid key={fundraiser} item xs={12} sm={6} md={4}>
                         <FundraiserCard web3={web3} fundraiser={fundraiser} />
                     </Grid>
                 )
