@@ -46,8 +46,8 @@ const ActiveFundraisers = ({ web3 }) => {
 
     return (
         <div>
-            <Typography variant="h5" margin="1rem 1rem">Active Fundraisers</Typography>
-            <Grid container justifyContent="center"  spacing={3}>
+            <Typography variant="h5" margin="1rem 0">Active Fundraisers</Typography>
+            <Grid container spacing={3}>
             {
                 fundraisers.map((fundraiser) => {
                 return (

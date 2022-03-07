@@ -101,7 +101,7 @@ const CreateCampaign = ({ web3}) => {
       state: "Maharashtra",
       size: 0
     }
-    // await createDrive(serverDrive);
+    await createDrive(serverDrive);
     alert('Successfully created fundraiser');
     clear();
   }
@@ -113,7 +113,8 @@ const CreateCampaign = ({ web3}) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    marginTop: '25%'
+                    marginTop: '25%',
+                    marginBottom: '10%'
                 }}
             >
                 <Typography component="h1" variant="h5">

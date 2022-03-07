@@ -110,38 +110,33 @@ const WithDrawalRequest = ({ web3 }) => {
                             onChange={handleChange}   
                         />
 
-                        <TextField 
-                            sx={{mt: 3}}
-                            // value={request.value} 
-                            name="value"
-                            onChange={handleChange} 
-                            label={`Donation in ${currency}`} 
-                            size="small" 
-                        />
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            padding: '1rem'
+                        }} >
+                            <TextField 
+                                sx={{mr: 3}}
+                                name="value"
+                                onChange={handleChange} 
+                                label={`Donation in ${currency}`} 
+                                size="small" 
+                            />
 
-                        <FormControl sx={{width: 150}}>
-                            <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-                            <Select
-                                label="Currency"
-                                onChange={(e) => setCurrency(e.target.value)}
-                                value={currency}
-                            >
-                                <MenuItem value={"INR"}>INR</MenuItem>
-                                <MenuItem value={"USD"}>USD</MenuItem>
-                            </Select>
-                        </FormControl>
+                            <FormControl sx={{width: 150}}>
+                                <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                                <Select
+                                    label="Currency"
+                                    onChange={(e) => setCurrency(e.target.value)}
+                                    value={currency}
+                                >
+                                    <MenuItem value={"INR"}>INR</MenuItem>
+                                    <MenuItem value={"USD"}>USD</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
 
-                        {/* <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="address"
-                            label="Recipient Metamask Wallet Address"
-                            id="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                        /> */}
+                        
 
                         <Button
                             type="submit"

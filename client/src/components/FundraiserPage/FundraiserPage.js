@@ -58,10 +58,7 @@ const FundraiserPage = ({ web3 }) => {
             const donationsCount = await instance.methods.donationsCount().call();
             const beneficiary = await instance.methods.beneficiary().call();
 
-            setDonationsCount(donationsCount);
-
-            console.log(parseFloat(target)+1);
-            
+            setDonationsCount(donationsCount);            
             setExchangeRate(exchangeRate);
             setAccounts(accounts);
             setInstance(instance);
@@ -76,7 +73,6 @@ const FundraiserPage = ({ web3 }) => {
             setTotalDonations(eth);
 
             const owner = await instance.methods.owner().call();
-            console.log(owner);
             if(owner === accounts[0]) {
                 setIsOwner(true)
             }
@@ -115,124 +111,115 @@ const FundraiserPage = ({ web3 }) => {
     }
 
     return (
-       <Container>
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    marginTop: "5rem",
-                    
-                }}
-            >
-                <Grid container spacing={5} direction="row">
-                    <Grid item xs={12} lg={8}>
-                        <Typography variant="h3">{fundName}</Typography>
-                        <img src={imageURL}  width={600} height={300}/>
-                        <Typography variant="body1" color="textprimary" marginTop="1rem">{ description }</Typography>
-                    </Grid>
-                    <Grid item xs={12} lg={4}>
-                        <Box
-                            sx={{
-                                minWidth: 400,
-                                
-                            }}
+        <Grid container>
+            <Grid item xs={12} lg={8} sx={{ marginTop: '5rem', marginBottom: '1rem'}}>
+                <Typography variant="h3" sx={{ marginBottom: '1rem'}}>{fundName}</Typography>
+                <Box sx={{
+                    width: '50%',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                }}>
+                    <img src={imageURL} width='100%' />
+                </Box>
+                <Typography variant="body1" color="textprimary" marginTop="1rem">{ description }</Typography>
+            </Grid>
+            <Grid item xs={12} lg={4} sx={{ marginTop: '2rem', marginBottom: '1rem'}}>
+                <Card
+                    sx={{
+                        marginTop: '70px',
+                        border: '1px solid #000',
+                        width: '100%'
+                    }}
+                >
+                    <CardContent>
+                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                        {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
+                    </CardContent>
+                    {/* <CardHeader 
+                        avatar={
+                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                A
+                            </Avatar>
+                        }
+                        title="Alex"
+                        subheader="$20"
+                    />
+                    <hr/>
+                    <CardHeader 
+                        avatar={
+                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                A
+                            </Avatar>
+                        }
+                        title="Tom"
+                        subheader="$40"
+                    /> */}
+                    <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                    <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
+                        <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                        <Select
+                            label="Currency"
+                            onChange={(e) => setCurrency(e.target.value)}
+                            value={currency}
                         >
-                            <Card
-                                sx={{
-                                    position: "fixed"
-                                }}
+                            <MenuItem value={'INR'}>INR</MenuItem>
+                            <MenuItem value={"USD"}>USD</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <CardActions>
+                        {
+                            !isOwner && 
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => donate()}
                             >
-                                <CardContent>
-                                    <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
-                                    {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
-                                </CardContent>
-                                {/* <CardHeader 
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                            A
-                                        </Avatar>
-                                    }
-                                    title="Alex"
-                                    subheader="$20"
-                                />
-                                <hr/>
-                                <CardHeader 
-                                    avatar={
-                                        <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                            A
-                                        </Avatar>
-                                    }
-                                    title="Tom"
-                                    subheader="$40"
-                                /> */}
-                                <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
-                                <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
-                                    <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-                                    <Select
-                                        label="Currency"
-                                        onChange={(e) => setCurrency(e.target.value)}
-                                        value={currency}
-                                    >
-                                        <MenuItem value={'INR'}>INR</MenuItem>
-                                        <MenuItem value={"USD"}>USD</MenuItem>
-                                    </Select>
-                                </FormControl>
-                                <CardActions>
-                                    {
-                                        !isOwner && 
-                                        <Button
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={() => donate()}
-                                        >
-                                            Donate Now
-                                        </Button>
-                                    }
-                                    
-                                </CardActions>
-                                <CardActions>
-                                 
-                                        {
-                                            isOwner &&
-                                            <Button
-                                                fullWidth
-                                                variant="contained"
-                                                color="primary"
-                                                component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
-                                            >
-                                                Withdraw
-                                            </Button>
-                                        }
-                                    
-                                    </CardActions>
-                                    <CardActions>
-                                    <div>
-                                        <Button
-                                            fullWidth
-                                            variant="outlined"
-                                            color="primary"
-                                            component={Link}
-                                            to={`/fundraiser/${params.id}/allrequests`}
-                                        >
-                                            View WithDrawal Requests
-                                        </Button>
-                                    </div>
-                                    <div>
-                                        <Button
-                                            fullWidth
-                                            variant="outlined"
-                                            color="primary"
-                                        >See All Donations</Button>
-                                    </div>
+                                Donate Now
+                            </Button>
+                        }
+                        
+                    </CardActions>
+                    <CardActions>
+                        
+                            {
+                                isOwner &&
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
+                                >
+                                    Withdraw
+                                </Button>
+                            }
+                        
+                        </CardActions>
+                        <CardActions>
+                        <div>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                color="primary"
+                                component={Link}
+                                to={`/fundraiser/${params.id}/allrequests`}
+                            >
+                                View WithDrawal Requests
+                            </Button>
+                        </div>
+                        <div>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                color="primary"
+                            >See All Donations</Button>
+                        </div>
 
-                                </CardActions>
+                    </CardActions>
 
-                            </Card>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Box>
-        </Container>
+                </Card>
+            </Grid>
+        </Grid>
     // <div>
     //         <Grid container direction="row" marginTop="1rem">
     //             <Grid item sx={{padding: 2}} md={6} lg={8}>
