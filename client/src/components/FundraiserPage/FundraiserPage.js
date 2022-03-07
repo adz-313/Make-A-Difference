@@ -40,6 +40,7 @@ const FundraiserPage = ({ web3 }) => {
     const [ isOwner, setIsOwner ] = useState(false);
     const [ isApprover, setIsApprover ] = useState(true);
     const [ requests, setRequests ] = useState([]);
+    const [ request, setRequest ] = useState(null);
 
     const init = async (fundraiser) => {
         try {
