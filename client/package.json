@@ -5,6 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
+    "@fortawesome/fontawesome-free-solid": "^5.0.13",
+    "@fortawesome/react-fontawesome": "^0.1.17",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.0.4",
     "axios": "^0.25.0",

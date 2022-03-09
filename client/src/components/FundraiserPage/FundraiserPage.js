@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import FundraiserContract from "../../contracts/Fundraiser.json";
-import { Paper, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
+import { IconButton, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
-import { grey } from '@mui/material/colors';
-import WithDrawalRequest from '../WithDrawals/WithDrawalRequest';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 const cc = require('cryptocompare');
 
 
@@ -113,7 +114,6 @@ const FundraiserPage = ({ web3 }) => {
     return (
         <Grid container>
             <Grid item xs={12} lg={8} sx={{ marginTop: '5rem', marginBottom: '1rem'}}>
-                <Typography variant="h3" sx={{ marginBottom: '1rem'}}>{fundName}</Typography>
                 <Box sx={{
                     width: '50%',
                     marginLeft: 'auto',
@@ -121,6 +121,7 @@ const FundraiserPage = ({ web3 }) => {
                 }}>
                     <img src={imageURL} width='100%' />
                 </Box>
+                <Typography variant="h4" sx={{ marginBottom: '1rem'}}>{fundName}</Typography>
                 <Typography variant="body1" color="textprimary" marginTop="1rem">{ description }</Typography>
             </Grid>
             <Grid item xs={12} lg={4} sx={{ marginTop: '2rem', marginBottom: '1rem'}}>
@@ -155,7 +156,7 @@ const FundraiserPage = ({ web3 }) => {
                         subheader="$40"
                     /> */}
                     <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
-                    <FormControl sx={{width: '25%', ml: 2, mt: 2}}>
+                    <FormControl sx={{width: '25%', ml: 2, mt: 2, mb: 1}}>
                         <InputLabel id="demo-simple-select-label">Currency</InputLabel>
                         <Select
                             label="Currency"
@@ -167,23 +168,23 @@ const FundraiserPage = ({ web3 }) => {
                         </Select>
                     </FormControl>
                     <CardActions>
-                        {
-                            !isOwner && 
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                onClick={() => donate()}
-                            >
-                                Donate Now
-                            </Button>
-                        }
-                        
-                    </CardActions>
-                    <CardActions>
-                        
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            minHeight: '10rem'
+                        }}>
                             {
-                                isOwner &&
+                                !isOwner ? 
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => donate()}
+                                >
+                                    Donate Now
+                                </Button> : 
                                 <Button
                                     fullWidth
                                     variant="contained"
@@ -193,10 +194,6 @@ const FundraiserPage = ({ web3 }) => {
                                     Withdraw
                                 </Button>
                             }
-                        
-                        </CardActions>
-                        <CardActions>
-                        <div>
                             <Button
                                 fullWidth
                                 variant="outlined"
@@ -206,17 +203,38 @@ const FundraiserPage = ({ web3 }) => {
                             >
                                 View WithDrawal Requests
                             </Button>
-                        </div>
-                        <div>
+                            <Box sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'flex-start',
+                                padding: '0 1rem'
+                            }}>
+                                <Box sx={{ flexGrow: 1, mt: '5px' }}>
+                                    <Typography variant='h6' >Share now</Typography>
+                                </Box>
+                                <IconButton>
+                                    <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a> 
+                                </IconButton>
+                                <IconButton>
+                                <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a> 
+                                    
+                                </IconButton>
+                                <IconButton>
+                                <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a> 
+                                </IconButton>
+                            </Box>
+                        </Box>
+                        
+                        {/* <div>
                             <Button
                                 fullWidth
                                 variant="outlined"
                                 color="primary"
                             >See All Donations</Button>
-                        </div>
-
+                        </div> */}
+                        
                     </CardActions>
-
+                    
                 </Card>
             </Grid>
         </Grid>
