@@ -7,6 +7,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { recordTransaction } from '../../api/index';
 const cc = require('cryptocompare');
 
 
@@ -86,7 +87,6 @@ const FundraiserPage = ({ web3 }) => {
                 const req = await instance.methods.requests(i).call();
                 setRequests(requests => [ ...requests, req]);
             }
-
           }
         catch(error) {
         alert(
@@ -108,6 +108,28 @@ const FundraiserPage = ({ web3 }) => {
             value: donation,
             gas: 650000
         });
+        
+        let exp_amt = 0;
+        if(currency !== 'INR') {
+            exp_amt = ethTotal * exchangeRate['INR'];
+            exp_amt = exp_amt.toFixed(0);
+        } else {
+            exp_amt = donationAmount;
+        }
+
+        const serverTransaction = {
+            userId: accounts[0],
+            amount: parseInt(exp_amt),
+            drive: params.id
+        }
+
+        console.log(serverTransaction);
+        try {
+            await recordTransaction(params.id, serverTransaction);
+        }
+        catch(e) {
+            console.log(e)
+        }
         
     }
 
