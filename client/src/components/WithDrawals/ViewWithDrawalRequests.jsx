@@ -157,7 +157,7 @@ const ViewWithDrawalRequests = ({ web3 }) => {
                                     {console.log(req)}
                                     <StyledTableCell>{ index+1 }</StyledTableCell>
                                     <StyledTableCell>{ req.description }</StyledTableCell>
-                                    <StyledTableCell align="left">{exchangeRate ? (web3.utils.fromWei(req.value, 'ether') * exchangeRate[currency]).toFixed(0) : 'Loading...'}</StyledTableCell>
+                                    <StyledTableCell align="left">{exchangeRate ? `${(web3.utils.fromWei(req.value, 'ether') * exchangeRate[currency]).toFixed(0)} INR` : 'Loading...'}</StyledTableCell>
                                     <StyledTableCell align="left">{req.approvalCount} / {donationsCount}</StyledTableCell>
                                     {isApprover ? 
                                     <StyledTableCell component="th" scope="row">
