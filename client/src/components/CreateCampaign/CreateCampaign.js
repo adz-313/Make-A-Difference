@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Container, TextField, Button, Link, Grid, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
 import FactoryContract from "../../contracts/FundraiserFactory.json";
-import { createDrive, getDrives } from '../../api/index';
+import { createDrive } from '../../api/index';
 
 
 const cc = require('cryptocompare');
@@ -77,8 +77,8 @@ const CreateCampaign = ({ web3}) => {
       amountToRaise,
       formData.beneficiary
     ).send({ from: accounts[0] });
-    console.log(resp.events.FundraiserCreated.returnValues.fundraiser);
-    console.log(resp);
+    
+    const driveAddress= resp.events.FundraiserCreated.returnValues.fundraiser;
 
     let exp_amt = 0;
     if(currency !== 'INR') {
@@ -89,6 +89,7 @@ const CreateCampaign = ({ web3}) => {
     }
 
     const serverDrive = {
+      address: driveAddress,
       name: formData.name,
       description: formData.description,
       expected_amount: exp_amt,

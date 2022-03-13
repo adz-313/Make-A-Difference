@@ -10719,12 +10719,21 @@
     "5777": {
       "events": {},
       "links": {},
+<<<<<<< HEAD
       "address": "0xb170ba9976Aa131862c5399cd971eC0A46dB3Ef9",
       "transactionHash": "0x05ca23d5b49582544958546df15727415eabbd19679ab9968baa09f1811da8d1"
     }
   },
   "schemaVersion": "3.4.4",
   "updatedAt": "2022-03-13T10:41:29.694Z",
+=======
+      "address": "0xe76B7f70E1E1Dd96d74bdEaB5ddF5FA0702a18d8",
+      "transactionHash": "0x1cb5cad2acee8dd9c064193d570c18281cfb52b443c045a7811446ed89ba49f4"
+    }
+  },
+  "schemaVersion": "3.4.5",
+  "updatedAt": "2022-03-13T10:10:33.910Z",
+>>>>>>> 6defa5c829ab261552a680553aa584f4372562ef
   "devdoc": {
     "kind": "dev",
     "methods": {},
