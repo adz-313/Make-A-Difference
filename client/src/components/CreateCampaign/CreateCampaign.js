@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {Container, TextField, Button, Link, Grid, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
+import {Container, TextField, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton';
 import FactoryContract from "../../contracts/FundraiserFactory.json";
 import { createDrive } from '../../api/index';
 
@@ -20,6 +21,7 @@ const CreateCampaign = ({ web3}) => {
     const [instance, setInstance] = useState(null);  
     const [accounts, setAccounts] = useState(null); 
     const [currency, setCurrency] = useState('INR');
+    const [loading, setLoading] = useState(false);
     const [ exchangeRate, setExchangeRate ] = useState(null);
     
     const handleChange = (e) => {
@@ -67,6 +69,7 @@ const CreateCampaign = ({ web3}) => {
 
   const createFundraiser = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
     const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
 
@@ -105,6 +108,7 @@ const CreateCampaign = ({ web3}) => {
     await createDrive(serverDrive);
     alert('Successfully created fundraiser');
     clear();
+    setLoading(false);
   }
 
     return (
@@ -195,15 +199,16 @@ const CreateCampaign = ({ web3}) => {
                         </Select>
                     </FormControl>
 
-                    <Button
+                    <LoadingButton
                       type="submit"
                       fullWidth
                       variant="contained"
                       color="primary"
+                      loading={loading}
                       onClick={(e) => createFundraiser(e)}
                     >
                         Submit
-                    </Button>
+                    </LoadingButton>
 
                 </form>
             </Box>

@@ -4,6 +4,7 @@ import FundraiserContract from "../../contracts/Fundraiser.json";
 import { IconButton, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -32,7 +33,7 @@ const FundraiserPage = ({ web3 }) => {
     const [ fundName, setFundname ] = useState(null);
     const [ description, setDescription ] = useState(null);
     const [ imageURL, setImageURL ] = useState(null);
-    const [ donationAmount, setDonationAmount] = useState(null);
+    const [ donationAmount, setDonationAmount] = useState(0);
     const [ totalDonations, setTotalDonations ] = useState(null);
     const [ target, setTarget ] = useState(null);
     const [ accounts, setAccounts ] = useState(null);
@@ -42,6 +43,7 @@ const FundraiserPage = ({ web3 }) => {
     const [ isOwner, setIsOwner ] = useState(false);
     const [ isApprover, setIsApprover ] = useState(true);
     const [ requests, setRequests ] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [ request, setRequest ] = useState(null);
 
     const init = async (fundraiser) => {
@@ -102,6 +104,7 @@ const FundraiserPage = ({ web3 }) => {
     },[])
 
     const donate = async () => {
+        setLoading(true);
         const ethTotal = donationAmount/ exchangeRate[currency];
         const donation = web3.utils.toWei(ethTotal.toFixed(18).toString());
         await instance.methods.donate().send({
@@ -131,7 +134,8 @@ const FundraiserPage = ({ web3 }) => {
         catch(e) {
             console.log(e)
         }
-        
+        setLoading(false);
+        setDonationAmount(0);
     }
 
     const createRequest = async () => {
@@ -215,14 +219,15 @@ const FundraiserPage = ({ web3 }) => {
                         }}>
                             {
                                 !isOwner ? 
-                                <Button
+                                <LoadingButton
                                     fullWidth
                                     variant="contained"
                                     color="primary"
                                     onClick={() => donate()}
+                                    loading={loading}
                                 >
                                     Donate Now
-                                </Button> : 
+                                </LoadingButton> : 
                                 <Button
                                     fullWidth
                                     variant="contained"
