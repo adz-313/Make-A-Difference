@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {Container, TextField, Button, Link, Grid, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
+import {Container, TextField, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton';
 import FactoryContract from "../../contracts/FundraiserFactory.json";
 import { createDrive } from '../../api/index';
+import BigNumber from "bignumber.js";
 
 
-const cc = require('cryptocompare');
+// const cc = require('cryptocompare');
 
 const initialState = {
     name: '',
@@ -20,7 +22,11 @@ const CreateCampaign = ({ web3}) => {
     const [instance, setInstance] = useState(null);  
     const [accounts, setAccounts] = useState(null); 
     const [currency, setCurrency] = useState('INR');
-    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [ exchangeRate, setExchangeRate ] = useState({
+      'INR': 211822.19,
+      'USD': 2572.38
+  });
     
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,8 +48,8 @@ const CreateCampaign = ({ web3}) => {
         setInstance(instance);
         setAccounts(accounts);
         
-        const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
-        setExchangeRate(exchangeRate);
+        // const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
+        // setExchangeRate(exchangeRate);
 
 
       } catch(error) {
@@ -67,9 +73,15 @@ const CreateCampaign = ({ web3}) => {
 
   const createFundraiser = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
-    const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
-
+    // const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
+    const amountToRaise = web3.utils.toWei(ethTotal.toString());
+    console.log(ethTotal)
+    // console.log(web3.utils.toWei(new BigNumber(ethTotal).toString()))
+    console.log(web3.utils.toWei(ethTotal.toString()))
+    console.log(exchangeRate[currency])
+    
     const resp = await instance.methods.createFundraiser(
       formData.name,
       formData.imageUrl,
@@ -105,6 +117,7 @@ const CreateCampaign = ({ web3}) => {
     await createDrive(serverDrive);
     alert('Successfully created fundraiser');
     clear();
+    setLoading(false);
   }
 
     return (
@@ -195,15 +208,16 @@ const CreateCampaign = ({ web3}) => {
                         </Select>
                     </FormControl>
 
-                    <Button
+                    <LoadingButton
                       type="submit"
                       fullWidth
                       variant="contained"
                       color="primary"
+                      loading={loading}
                       onClick={(e) => createFundraiser(e)}
                     >
                         Submit
-                    </Button>
+                    </LoadingButton>
 
                 </form>
             </Box>

@@ -4,11 +4,12 @@ import FundraiserContract from "../../contracts/Fundraiser.json";
 import { IconButton, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { recordTransaction } from '../../api/index';
-const cc = require('cryptocompare');
+// const cc = require('cryptocompare');
 
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -32,17 +33,23 @@ const FundraiserPage = ({ web3 }) => {
     const [ fundName, setFundname ] = useState(null);
     const [ description, setDescription ] = useState(null);
     const [ imageURL, setImageURL ] = useState(null);
-    const [ donationAmount, setDonationAmount] = useState(null);
+    const [ donationAmount, setDonationAmount] = useState(0);
     const [ totalDonations, setTotalDonations ] = useState(null);
     const [ target, setTarget ] = useState(null);
     const [ accounts, setAccounts ] = useState(null);
-    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [ exchangeRate, setExchangeRate ] = useState({
+        'INR': 211822.19,
+        'USD': 2572.38
+    });
     const [ donationsCount, setDonationsCount ] = useState(null);
     const [ currency, setCurrency ] = useState('INR');
     const [ isOwner, setIsOwner ] = useState(false);
     const [ isApprover, setIsApprover ] = useState(true);
     const [ requests, setRequests ] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [ request, setRequest ] = useState(null);
+
+
 
     const init = async (fundraiser) => {
         try {
@@ -50,7 +57,7 @@ const FundraiserPage = ({ web3 }) => {
                 FundraiserContract.abi,
                 fundraiser
             );
-            const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
+            // const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
 
             const accounts = await web3.eth.getAccounts();
             const name = await instance.methods.name().call();
@@ -62,7 +69,7 @@ const FundraiserPage = ({ web3 }) => {
             const beneficiary = await instance.methods.beneficiary().call();
 
             setDonationsCount(donationsCount);            
-            setExchangeRate(exchangeRate);
+            // setExchangeRate(exchangeRate);
             setAccounts(accounts);
             setInstance(instance);
             setFundname(name);
@@ -72,6 +79,9 @@ const FundraiserPage = ({ web3 }) => {
             // target = web3.utils.fromWei(target, 'ether');
             setTarget(parseFloat(web3.utils.fromWei(target, 'ether')));
             
+            console.log(target)
+            console.log(exchangeRate[currency])
+
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
@@ -102,6 +112,7 @@ const FundraiserPage = ({ web3 }) => {
     },[])
 
     const donate = async () => {
+        setLoading(true);
         const ethTotal = donationAmount/ exchangeRate[currency];
         const donation = web3.utils.toWei(ethTotal.toFixed(18).toString());
         await instance.methods.donate().send({
@@ -131,7 +142,8 @@ const FundraiserPage = ({ web3 }) => {
         catch(e) {
             console.log(e)
         }
-        
+        setLoading(false);
+        setDonationAmount(0);
     }
 
     const createRequest = async () => {
@@ -171,7 +183,7 @@ const FundraiserPage = ({ web3 }) => {
                     }}
                 >
                     <CardContent>
-                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
                         {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
                     </CardContent>
                     {/* <CardHeader 
@@ -215,14 +227,15 @@ const FundraiserPage = ({ web3 }) => {
                         }}>
                             {
                                 !isOwner ? 
-                                <Button
+                                <LoadingButton
                                     fullWidth
                                     variant="contained"
                                     color="primary"
                                     onClick={() => donate()}
+                                    loading={loading}
                                 >
                                     Donate Now
-                                </Button> : 
+                                </LoadingButton> : 
                                 <Button
                                     fullWidth
                                     variant="contained"
