@@ -9,7 +9,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { recordTransaction } from '../../api/index';
-const cc = require('cryptocompare');
+// const cc = require('cryptocompare');
 
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -37,7 +37,10 @@ const FundraiserPage = ({ web3 }) => {
     const [ totalDonations, setTotalDonations ] = useState(null);
     const [ target, setTarget ] = useState(null);
     const [ accounts, setAccounts ] = useState(null);
-    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [ exchangeRate, setExchangeRate ] = useState({
+        'INR': 211822.19,
+        'USD': 2572.38
+    });
     const [ donationsCount, setDonationsCount ] = useState(null);
     const [ currency, setCurrency ] = useState('INR');
     const [ isOwner, setIsOwner ] = useState(false);
@@ -46,13 +49,15 @@ const FundraiserPage = ({ web3 }) => {
     const [loading, setLoading] = useState(false);
     const [ request, setRequest ] = useState(null);
 
+
+
     const init = async (fundraiser) => {
         try {
             const instance = new web3.eth.Contract(
                 FundraiserContract.abi,
                 fundraiser
             );
-            const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
+            // const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
 
             const accounts = await web3.eth.getAccounts();
             const name = await instance.methods.name().call();
@@ -64,7 +69,7 @@ const FundraiserPage = ({ web3 }) => {
             const beneficiary = await instance.methods.beneficiary().call();
 
             setDonationsCount(donationsCount);            
-            setExchangeRate(exchangeRate);
+            // setExchangeRate(exchangeRate);
             setAccounts(accounts);
             setInstance(instance);
             setFundname(name);
@@ -74,6 +79,9 @@ const FundraiserPage = ({ web3 }) => {
             // target = web3.utils.fromWei(target, 'ether');
             setTarget(parseFloat(web3.utils.fromWei(target, 'ether')));
             
+            console.log(target)
+            console.log(exchangeRate[currency])
+
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
@@ -175,7 +183,7 @@ const FundraiserPage = ({ web3 }) => {
                     }}
                 >
                     <CardContent>
-                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
                         {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
                     </CardContent>
                     {/* <CardHeader 
