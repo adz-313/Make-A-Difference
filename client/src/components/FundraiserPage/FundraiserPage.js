@@ -162,133 +162,135 @@ const FundraiserPage = ({ web3 }) => {
     }
 
     return (
-        <Grid container>
-            <Grid item xs={12} lg={8} sx={{ marginTop: '5rem', marginBottom: '1rem'}}>
-                <Box sx={{
-                    width: '50%',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                }}>
-                    <img src={imageURL} width='100%' />
-                </Box>
-                <Typography variant="h4" sx={{ marginBottom: '1rem'}}>{fundName}</Typography>
-                <Typography variant="body1" color="textprimary" marginTop="1rem">{ description }</Typography>
-            </Grid>
-            <Grid item xs={12} lg={4} sx={{ marginTop: '2rem', marginBottom: '1rem'}}>
-                <Card
-                    sx={{
-                        marginTop: '70px',
-                        border: '1px solid #000',
-                        width: '100%'
-                    }}
-                >
-                    <CardContent>
-                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
-                        {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
-                    </CardContent>
-                    {/* <CardHeader 
-                        avatar={
-                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                A
-                            </Avatar>
-                        }
-                        title="Alex"
-                        subheader="$20"
-                    />
-                    <hr/>
-                    <CardHeader 
-                        avatar={
-                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                A
-                            </Avatar>
-                        }
-                        title="Tom"
-                        subheader="$40"
-                    /> */}
-                    <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
-                    <FormControl sx={{width: '25%', ml: 2, mt: 2, mb: 1}}>
-                        <InputLabel id="demo-simple-select-label">Currency</InputLabel>
-                        <Select
-                            label="Currency"
-                            onChange={(e) => setCurrency(e.target.value)}
-                            value={currency}
-                        >
-                            <MenuItem value={'INR'}>INR</MenuItem>
-                            <MenuItem value={"USD"}>USD</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <CardActions>
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                            justifyContent: 'space-between',
-                            minHeight: '10rem'
-                        }}>
-                            {
-                                !isOwner ? 
-                                <LoadingButton
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => donate()}
-                                    loading={loading}
-                                >
-                                    Donate Now
-                                </LoadingButton> : 
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
-                                >
-                                    Withdraw
-                                </Button>
+        <Container>
+            <Grid container>
+                <Grid item xs={12} lg={8} sx={{ marginTop: '5rem', marginBottom: '1rem'}}>
+                    <Box sx={{
+                        width: '50%',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                    }}>
+                        <img src={imageURL} width='100%' />
+                    </Box>
+                    <Typography variant="h4" sx={{ marginBottom: '1rem'}}>{fundName}</Typography>
+                    <Typography variant="body1" color="textprimary" marginTop="1rem">{ description }</Typography>
+                </Grid>
+                <Grid item xs={12} lg={4} sx={{ marginTop: '2rem', marginBottom: '1rem'}}>
+                    <Card
+                        sx={{
+                            marginTop: '70px',
+                            border: '1px solid #000',
+                            width: '100%'
+                        }}
+                    >
+                        <CardContent>
+                            <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                            {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
+                        </CardContent>
+                        {/* <CardHeader 
+                            avatar={
+                                <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                    A
+                                </Avatar>
                             }
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                color="primary"
-                                component={Link}
-                                to={`/fundraiser/${params.id}/allrequests`}
+                            title="Alex"
+                            subheader="$20"
+                        />
+                        <hr/>
+                        <CardHeader 
+                            avatar={
+                                <Avatar sx={{ bgcolor: grey }} aria-label="user">
+                                    A
+                                </Avatar>
+                            }
+                            title="Tom"
+                            subheader="$40"
+                        /> */}
+                        <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                        <FormControl sx={{width: '25%', ml: 2, mt: 2, mb: 1}}>
+                            <InputLabel id="demo-simple-select-label">Currency</InputLabel>
+                            <Select
+                                label="Currency"
+                                onChange={(e) => setCurrency(e.target.value)}
+                                value={currency}
                             >
-                                View WithDrawal Requests
-                            </Button>
+                                <MenuItem value={'INR'}>INR</MenuItem>
+                                <MenuItem value={"USD"}>USD</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <CardActions>
                             <Box sx={{
                                 display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'flex-start',
-                                padding: '0 1rem'
+                                flexDirection: 'column',
+                                width: '100%',
+                                justifyContent: 'space-between',
+                                minHeight: '10rem'
                             }}>
-                                <Box sx={{ flexGrow: 1, mt: '5px' }}>
-                                    <Typography variant='h6' >Share now</Typography>
+                                {
+                                    !isOwner ? 
+                                    <LoadingButton
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => donate()}
+                                        loading={loading}
+                                    >
+                                        Donate Now
+                                    </LoadingButton> : 
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
+                                    >
+                                        Withdraw
+                                    </Button>
+                                }
+                                <Button
+                                    fullWidth
+                                    variant="outlined"
+                                    color="primary"
+                                    component={Link}
+                                    to={`/fundraiser/${params.id}/allrequests`}
+                                >
+                                    View WithDrawal Requests
+                                </Button>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-start',
+                                    padding: '0 1rem'
+                                }}>
+                                    <Box sx={{ flexGrow: 1, mt: '5px' }}>
+                                        <Typography variant='h6' >Share now</Typography>
+                                    </Box>
+                                    <IconButton>
+                                        <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a> 
+                                    </IconButton>
+                                    <IconButton>
+                                    <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a> 
+                                        
+                                    </IconButton>
+                                    <IconButton>
+                                    <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a> 
+                                    </IconButton>
                                 </Box>
-                                <IconButton>
-                                    <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a> 
-                                </IconButton>
-                                <IconButton>
-                                <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a> 
-                                    
-                                </IconButton>
-                                <IconButton>
-                                <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a> 
-                                </IconButton>
                             </Box>
-                        </Box>
+                            
+                            {/* <div>
+                                <Button
+                                    fullWidth
+                                    variant="outlined"
+                                    color="primary"
+                                >See All Donations</Button>
+                            </div> */}
+                            
+                        </CardActions>
                         
-                        {/* <div>
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                color="primary"
-                            >See All Donations</Button>
-                        </div> */}
-                        
-                    </CardActions>
-                    
-                </Card>
+                    </Card>
+                </Grid>
             </Grid>
-        </Grid>
+        </Container>
     // <div>
     //         <Grid container direction="row" marginTop="1rem">
     //             <Grid item sx={{padding: 2}} md={6} lg={8}>

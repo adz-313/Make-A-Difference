@@ -10,6 +10,8 @@ import Navbar from './components/Navbar/Navbar';
 import HomePage from './components/HomePage/HomePage';
 import  WithDrawalRequest from './components/WithDrawals/WithDrawalRequest';
 import ViewWithDrawalRequests from './components/WithDrawals/ViewWithDrawalRequests';
+import SignIn from './components/SignIn/SignIn';
+import SignUp from './components/SignUp/SignUp';
 
 const App = () => {
   const [ web3, setWeb3 ] = useState(null);
@@ -37,18 +39,21 @@ const App = () => {
     <>
         <CssBaseline />
         <Navbar/>
-        <Container>
+        
           <Switch>
-            <Route path="/campaign/new" exact component={() => <CreateCampaign web3={web3}/>} />
-            {/* <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} /> */}
-            <Route path="/home" exact component={() => <HomePage web3={web3} />} />
-            <Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
-            <Route path="/fundraiser/:id/withdrawal/new" exact component={() => <WithDrawalRequest web3={web3} />} />
-            <Route path="/fundraiser/:id/allrequests" exact component={() => <ViewWithDrawalRequests web3={web3} />} />
+            
+              <Route path="/campaign/new" exact component={() => <CreateCampaign web3={web3}/>} />
+              {/* <Route path="/" exact component={() => <Home web3={web3} myinstance={instance} myaccounts={accounts} myfundraisers={fundraisers} getFundraisers={getFundraisers} />} /> */}
+              <Route path="/home" exact component={() => <HomePage web3={web3} />} />
+              <Route path="/fundraiser/:id" exact component={() => <FundraiserPage web3={web3} />} />
+              <Route path="/fundraiser/:id/withdrawal/new" exact component={() => <WithDrawalRequest web3={web3} />} />
+              <Route path="/fundraiser/:id/allrequests" exact component={() => <ViewWithDrawalRequests web3={web3} />} />
+            
+              <Route path="/signup" exact component={SignUp} />
+            <Route path="/login" exact component={SignIn} />
           </Switch>
-        </Container>
     </>
   )
 }
 
-export default App
+export default App 
