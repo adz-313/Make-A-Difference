@@ -35,7 +35,10 @@ const ViewWithDrawalRequests = ({ web3 }) => {
     const [ requests, setRequests ] = useState([]);
     const [ instance, setInstance] = useState(null);
     const [ accounts, setAccounts ] = useState(null);
-    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [ exchangeRate, setExchangeRate ] = useState({
+        'INR': 211822.19,
+        'USD': 2572.38
+    });
     const [isLoading, setIsLoading] = useState(true);
     const [ donationsCount, setDonationsCount ] = useState(null);
     const [ currency, setCurrency ] = useState('INR');
@@ -46,7 +49,7 @@ const ViewWithDrawalRequests = ({ web3 }) => {
                 FundraiserContract.abi,
                 fundraiser
             );
-            const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
+            // const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
 
             const accounts = await web3.eth.getAccounts();
             const name = await instance.methods.name().call();
@@ -59,7 +62,7 @@ const ViewWithDrawalRequests = ({ web3 }) => {
 
             setDonationsCount(donationsCount);
             
-            setExchangeRate(exchangeRate);
+            // setExchangeRate(exchangeRate);
             setAccounts(accounts);
             setInstance(instance);
             // setFundname(name);
@@ -86,6 +89,8 @@ const ViewWithDrawalRequests = ({ web3 }) => {
                 const req = await instance.methods.requests(i).call();
                 setRequests(requests => [ ...requests, req]);
             }
+
+            console.log(instance.methods)
 
           }
         catch(error) {

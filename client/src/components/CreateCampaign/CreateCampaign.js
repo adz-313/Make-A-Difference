@@ -3,30 +3,35 @@ import {Container, TextField, Typography, Box, FormControl, InputLabel, Select, 
 import LoadingButton from '@mui/lab/LoadingButton';
 import FactoryContract from "../../contracts/FundraiserFactory.json";
 import { createDrive } from '../../api/index';
+import BigNumber from "bignumber.js";
 
 
-const cc = require('cryptocompare');
+// const cc = require('cryptocompare');
 
-const initialState = {
-    name: '',
-    imageUrl: '',
-    description: '',
-    targetToAchieve: '',
-    beneficiary: ''
-}
+
 
 const CreateCampaign = ({ web3}) => {
 
-    const [formData, setFormData] = useState(initialState);
+    const [formData, setFormData] = useState({
+      name: '',
+      imageUrl: '',
+      description: '',
+      targetToAchieve: '',
+      category: '',
+      beneficiary: ''
+    });
     const [instance, setInstance] = useState(null);  
     const [accounts, setAccounts] = useState(null); 
     const [currency, setCurrency] = useState('INR');
     const [loading, setLoading] = useState(false);
-    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [ exchangeRate, setExchangeRate ] = useState({
+      'INR': 211822.19,
+      'USD': 2572.38
+  });
     
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    }
+  const handleChange = (e) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
 
     
   useEffect(() => {
@@ -44,8 +49,10 @@ const CreateCampaign = ({ web3}) => {
         setInstance(instance);
         setAccounts(accounts);
         
-        const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
-        setExchangeRate(exchangeRate);
+        setFormData({ ...formData, beneficiary: accounts[0] });
+
+        // const exchangeRate = await cc.price('ETH', ['INR', 'USD']);
+        // setExchangeRate(exchangeRate);
 
 
       } catch(error) {
@@ -70,13 +77,15 @@ const CreateCampaign = ({ web3}) => {
   const createFundraiser = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
-    const amountToRaise = web3.utils.toWei(ethTotal.toFixed(18).toString());
 
+    const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
+    const amountToRaise = web3.utils.toWei(ethTotal.toString());
+    
     const resp = await instance.methods.createFundraiser(
       formData.name,
       formData.imageUrl,
       formData.description,
+      formData.category,
       amountToRaise,
       formData.beneficiary
     ).send({ from: accounts[0] });
@@ -100,7 +109,7 @@ const CreateCampaign = ({ web3}) => {
       donation_count: 0,
       owner_id: accounts[0],
       status: 0,
-      category: 0,
+      category: formData.category,
       imageUrl: formData.imageUrl,
       state: "Maharashtra",
       size: 0
@@ -175,6 +184,26 @@ const CreateCampaign = ({ web3}) => {
                         onChange={handleChange}
                     />
 
+                    <FormControl fullWidth sx={{mt:2}}>
+                      <InputLabel id="category-select">Category</InputLabel>
+                      <Select
+                        labelId="category-select"
+                        value={formData.category}
+                        label="Category"
+                        name="category"
+                        onChange={handleChange}
+                      >
+                        <MenuItem value={'Healthcare'}>Healthcare</MenuItem>
+                        <MenuItem value={'Animals'}>Animals</MenuItem>
+                        <MenuItem value={'Art and culture'}>Art and culture</MenuItem>
+                        <MenuItem value={'Community development'}>Community development</MenuItem>
+                        <MenuItem value={'Environment'}>Environment</MenuItem>
+                        <MenuItem value={'Education'}>Education</MenuItem>
+                        <MenuItem value={'Human services'}>Human services</MenuItem>
+                        <MenuItem value={'Religion'}>Religion</MenuItem>
+                      </Select>
+                    </FormControl>
+
                     <TextField
                         variant="outlined"
                         margin="normal"
@@ -185,9 +214,9 @@ const CreateCampaign = ({ web3}) => {
                         id="targetToAchieve"
                         value={formData.targetToAchieve}
                         onChange={handleChange}
-                        sx={{mt: 2, width: '70%', mb: 2}}
+                        sx={{mt: 3, width: '70%', mb: 2}}
                     />
-                    <FormControl sx={{width: '25%', ml: 2, mt: 2, mb: 2}}>
+                    <FormControl sx={{width: '25%', ml: 2, mt: 3, mb: 2}}>
                         <InputLabel id="demo-simple-select-label">Currency</InputLabel>
                         <Select
                             label="Currency"

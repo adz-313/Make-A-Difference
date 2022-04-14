@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import FundraiserContract from "../../contracts/Fundraiser.json";
-import { IconButton, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
+import { Chip, IconButton, Typography, TextField, Button, Grid, FormControl, InputLabel, Select, MenuItem, Container, Box, Grow, Card, CardContent, CardHeader, Avatar, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -9,7 +9,8 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { recordTransaction } from '../../api/index';
-const cc = require('cryptocompare');
+import DonationModal from './Modal/DonationModal';
+// const cc = require('cryptocompare');
 
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -32,12 +33,17 @@ const FundraiserPage = ({ web3 }) => {
     const [ beneficiary, setBeneficiary] = useState(null);
     const [ fundName, setFundname ] = useState(null);
     const [ description, setDescription ] = useState(null);
+    const [ category, setCategory ] = useState(null);
     const [ imageURL, setImageURL ] = useState(null);
     const [ donationAmount, setDonationAmount] = useState(0);
+    const [ message, setMessage] = useState('');
     const [ totalDonations, setTotalDonations ] = useState(null);
     const [ target, setTarget ] = useState(null);
     const [ accounts, setAccounts ] = useState(null);
-    const [ exchangeRate, setExchangeRate ] = useState(null);
+    const [ exchangeRate, setExchangeRate ] = useState({
+        'INR': 211822.19,
+        'USD': 2572.38
+    });
     const [ donationsCount, setDonationsCount ] = useState(null);
     const [ currency, setCurrency ] = useState('INR');
     const [ isOwner, setIsOwner ] = useState(false);
@@ -45,6 +51,8 @@ const FundraiserPage = ({ web3 }) => {
     const [ requests, setRequests ] = useState([]);
     const [loading, setLoading] = useState(false);
     const [ request, setRequest ] = useState(null);
+    const [ donations, setDonations ] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     const init = async (fundraiser) => {
         try {
@@ -52,11 +60,12 @@ const FundraiserPage = ({ web3 }) => {
                 FundraiserContract.abi,
                 fundraiser
             );
-            const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
+            // const exchangeRate = await cc.price('ETH', ['INR', 'USD'])
 
             const accounts = await web3.eth.getAccounts();
             const name = await instance.methods.name().call();
             const description = await instance.methods.description().call();
+            const category = await instance.methods.category().call();
             const imageURL = await instance.methods.imageURL().call();
             const target = await instance.methods.targetToAchieve().call();
             const totalDonations = await instance.methods.totalDonations().call();
@@ -64,16 +73,17 @@ const FundraiserPage = ({ web3 }) => {
             const beneficiary = await instance.methods.beneficiary().call();
 
             setDonationsCount(donationsCount);            
-            setExchangeRate(exchangeRate);
+            // setExchangeRate(exchangeRate);
             setAccounts(accounts);
             setInstance(instance);
             setFundname(name);
             setDescription(description);
+            setCategory(category);
             setImageURL(imageURL);
             setBeneficiary(beneficiary);
             // target = web3.utils.fromWei(target, 'ether');
             setTarget(parseFloat(web3.utils.fromWei(target, 'ether')));
-            
+
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
 
@@ -86,10 +96,16 @@ const FundraiserPage = ({ web3 }) => {
             setIsApprover(isApprover);
             
             const count = await instance.methods.getRequestsCount().call();
-            for(let i=0; i<count; i++) {
-                const req = await instance.methods.requests(i).call();
-                setRequests(requests => [ ...requests, req]);
-            }
+            // for(let i=0; i<count; i++) {
+            //     const req = await instance.methods.requests(i).call();
+            //     setRequests(requests => [ ...requests, req]);
+            // }
+
+            // console.log(instance.methods)
+
+            const donations = await instance.methods.getDonations().call();
+            setDonations(donations);
+            console.log(donations)
           }
         catch(error) {
         alert(
@@ -103,11 +119,16 @@ const FundraiserPage = ({ web3 }) => {
         if(web3 && params.id) init(params.id)
     },[])
 
+    const toggleModal = () => {
+        setShowModal(!showModal);
+        console.log(showModal);
+    }
+
     const donate = async () => {
         setLoading(true);
         const ethTotal = donationAmount/ exchangeRate[currency];
         const donation = web3.utils.toWei(ethTotal.toFixed(18).toString());
-        await instance.methods.donate().send({
+        await instance.methods.donate(message, 'aditya').send({
             from: accounts[0],
             value: donation,
             gas: 650000
@@ -127,7 +148,6 @@ const FundraiserPage = ({ web3 }) => {
             drive: params.id
         }
 
-        console.log(serverTransaction);
         try {
             await recordTransaction(params.id, serverTransaction);
         }
@@ -138,6 +158,7 @@ const FundraiserPage = ({ web3 }) => {
         setDonationAmount(0);
     }
 
+    // Not used here, used in Withdrawal section
     const createRequest = async () => {
         request.recipient = beneficiary;
         const ethTotal = request.value/ exchangeRate[currency];
@@ -149,6 +170,7 @@ const FundraiserPage = ({ web3 }) => {
         ).send({ from: accounts[0] });
     }
 
+    // Not used here, used in Withdrawal section
     const approveRequest = async index => {
         await instance.methods.approveRequest(index).send({ from: accounts[0] });
     }
@@ -164,6 +186,7 @@ const FundraiserPage = ({ web3 }) => {
                     <img src={imageURL} width='100%' />
                 </Box>
                 <Typography variant="h4" sx={{ marginBottom: '1rem'}}>{fundName}</Typography>
+                <Typography variant="h6" sx={{ marginBottom: '1rem'}}>{`Category: ${category}`}</Typography>
                 <Typography variant="body1" color="textprimary" marginTop="1rem">{ description }</Typography>
             </Grid>
             <Grid item xs={12} lg={4} sx={{ marginTop: '2rem', marginBottom: '1rem'}}>
@@ -175,29 +198,30 @@ const FundraiserPage = ({ web3 }) => {
                     }}
                 >
                     <CardContent>
-                        <Typography color="text.primary" variant="h5" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(0)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
-                        {exchangeRate && <BorderLinearProgress variant="determinate" value={((totalDonations * exchangeRate[currency]).toFixed(0) / (target * exchangeRate[currency]).toFixed(0))*100} />}
+                        <Typography color="text.primary" variant="h5" component="div">Over {donationsCount} people have donated already. Donate now!</Typography>
+                        <Typography sx={{mt:1}} color="text.primary" variant="body1" component="div">{ exchangeRate ? (totalDonations * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'} raised out of { exchangeRate ? (target * exchangeRate[currency]).toFixed(2)  : 'Loading...'} {currency === 'INR' ? '₹' : '$'}</Typography>
+                        {exchangeRate && <BorderLinearProgress variant="determinate" value={totalDonations < target ? (((totalDonations * exchangeRate[currency]) / (target * exchangeRate[currency]))*100).toFixed(0) : 100} />}
                     </CardContent>
-                    {/* <CardHeader 
-                        avatar={
-                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                A
-                            </Avatar>
-                        }
-                        title="Alex"
-                        subheader="$20"
-                    />
+
+                    <CardContent sx={{ maxHeight: '10rem', overflow: 'auto' }}>
+                        {donations && donations.map(donation => {
+                            return (
+                                <CardHeader 
+                                    avatar={
+                                        <Avatar sx={{ bgcolor: '#555' }} aria-label="user">
+                                            {donation.name[0].toUpperCase()}
+                                        </Avatar>
+                                    }
+                                    title= {donation.message}
+                                    subheader= {`${web3.utils.fromWei(donation.value, "ether")} eth`}
+                                />
+                            )
+                        }) }
+                    </CardContent>
+                    
+                    
                     <hr/>
-                    <CardHeader 
-                        avatar={
-                            <Avatar sx={{ bgcolor: grey }} aria-label="user">
-                                A
-                            </Avatar>
-                        }
-                        title="Tom"
-                        subheader="$40"
-                    /> */}
-                    <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
+                    {/* <TextField variant="standard" sx={{ml: 1, mt: 3, width: '68%'}} onChange={(e) => setDonationAmount(e.target.value)} label={`Donation in ${currency}`} size="small" />
                     <FormControl sx={{width: '25%', ml: 2, mt: 2, mb: 1}}>
                         <InputLabel id="demo-simple-select-label">Currency</InputLabel>
                         <Select
@@ -208,7 +232,10 @@ const FundraiserPage = ({ web3 }) => {
                             <MenuItem value={'INR'}>INR</MenuItem>
                             <MenuItem value={"USD"}>USD</MenuItem>
                         </Select>
-                    </FormControl>
+                    </FormControl> */}
+
+                    <DonationModal donate={donate} currency={currency} setCurrency={setCurrency} setDonationAmount={setDonationAmount} setMessage={setMessage} showModal={showModal} toggleModal={toggleModal} />
+
                     <CardActions>
                         <Box sx={{
                             display: 'flex',
@@ -223,7 +250,7 @@ const FundraiserPage = ({ web3 }) => {
                                     fullWidth
                                     variant="contained"
                                     color="primary"
-                                    onClick={() => donate()}
+                                    onClick={toggleModal}
                                     loading={loading}
                                 >
                                     Donate Now
@@ -256,14 +283,16 @@ const FundraiserPage = ({ web3 }) => {
                                     <Typography variant='h6' >Share now</Typography>
                                 </Box>
                                 <IconButton>
-                                    <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a> 
+                                    <Box sx={{color: '#076ea8'}} component="a" target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}> <LinkedInIcon /> </Box>
+                                    {/* <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a>  */}
                                 </IconButton>
                                 <IconButton>
-                                <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a> 
-                                    
+                                    {/* <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a>  */}
+                                    <Box sx={{color: '#4267B2'}} component="a" target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}> <FacebookIcon /> </Box>
                                 </IconButton>
                                 <IconButton>
-                                <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a> 
+                                <Box sx={{color: '#00acee'}} component="a" target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}> <TwitterIcon /> </Box>
+                                    {/* <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a>  */}
                                 </IconButton>
                             </Box>
                         </Box>
