@@ -128,6 +128,7 @@ const ViewWithDrawalRequests = ({ web3 }) => {
             sx={{
                 flexGrow: 1,
                 marginTop: "7rem",
+                minHeight: '75vh'
             }}
         >
             <Grid container>

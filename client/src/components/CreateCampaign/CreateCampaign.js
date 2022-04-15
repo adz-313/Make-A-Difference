@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Container, TextField, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
+import {Radio, FormControlLabel, RadioGroup, FormLabel, Container, TextField, Typography, Box, FormControl, InputLabel, Select, MenuItem} from '@mui/material'
 import LoadingButton from '@mui/lab/LoadingButton';
 import FactoryContract from "../../contracts/FundraiserFactory.json";
 import { createDrive } from '../../api/index';
@@ -18,7 +18,8 @@ const CreateCampaign = ({ web3}) => {
       description: '',
       targetToAchieve: '',
       category: '',
-      beneficiary: ''
+      beneficiary: '',
+      isRequestBased: false
     });
     const [instance, setInstance] = useState(null);  
     const [accounts, setAccounts] = useState(null); 
@@ -77,11 +78,11 @@ const CreateCampaign = ({ web3}) => {
   const createFundraiser = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     const ethTotal = formData.targetToAchieve/ exchangeRate[currency];
     const amountToRaise = web3.utils.toWei(ethTotal.toString());
     
     const resp = await instance.methods.createFundraiser(
+      formData.isRequestBased,
       formData.name,
       formData.imageUrl,
       formData.description,
@@ -91,6 +92,17 @@ const CreateCampaign = ({ web3}) => {
     ).send({ from: accounts[0] });
     
     const driveAddress= resp.events.FundraiserCreated.returnValues.fundraiser;
+
+    const categoryConvert = {
+      'Healthcare': 0,
+      'Animals': 1,
+      'Art and culture': 2,
+      'Community development': 3,
+      'Environment': 4,
+      'Education': 5,
+      'Human services': 6,
+      'Religion': 7
+    }
 
     let exp_amt = 0;
     if(currency !== 'INR') {
@@ -109,7 +121,7 @@ const CreateCampaign = ({ web3}) => {
       donation_count: 0,
       owner_id: accounts[0],
       status: 0,
-      category: formData.category,
+      category: categoryConvert[formData.category],
       imageUrl: formData.imageUrl,
       state: "Maharashtra",
       size: 0
@@ -228,6 +240,18 @@ const CreateCampaign = ({ web3}) => {
                         </Select>
                     </FormControl>
 
+                    <FormControl>
+                      <FormLabel>Type</FormLabel>
+                      <RadioGroup
+                        row
+                        name="isRequestBased"
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel value="true" control={<Radio />} label="Request based" />
+                        <FormControlLabel value="false" control={<Radio />} label="Direct withdrawal" />
+                      </RadioGroup>
+                    </FormControl>
+
                     <LoadingButton
                       type="submit"
                       fullWidth
@@ -235,6 +259,7 @@ const CreateCampaign = ({ web3}) => {
                       color="primary"
                       loading={loading}
                       onClick={(e) => createFundraiser(e)}
+                      sx={{mt: 1}}
                     >
                         Submit
                     </LoadingButton>

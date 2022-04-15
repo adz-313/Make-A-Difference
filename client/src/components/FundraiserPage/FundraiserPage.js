@@ -31,6 +31,7 @@ const FundraiserPage = ({ web3 }) => {
 
     const [ instance, setInstance] = useState(null);
     const [ beneficiary, setBeneficiary] = useState(null);
+    const [ isRequestBased, setIsRequestBased] = useState(null);
     const [ fundName, setFundname ] = useState(null);
     const [ description, setDescription ] = useState(null);
     const [ category, setCategory ] = useState(null);
@@ -71,6 +72,7 @@ const FundraiserPage = ({ web3 }) => {
             const totalDonations = await instance.methods.totalDonations().call();
             const donationsCount = await instance.methods.donationsCount().call();
             const beneficiary = await instance.methods.beneficiary().call();
+            const isRequestBased = await instance.methods.isRequestBased().call();
 
             setDonationsCount(donationsCount);            
             // setExchangeRate(exchangeRate);
@@ -83,6 +85,7 @@ const FundraiserPage = ({ web3 }) => {
             setBeneficiary(beneficiary);
             // target = web3.utils.fromWei(target, 'ether');
             setTarget(parseFloat(web3.utils.fromWei(target, 'ether')));
+            setIsRequestBased(isRequestBased);
 
             const eth = web3.utils.fromWei(totalDonations, 'ether')
             setTotalDonations(eth);
@@ -96,16 +99,9 @@ const FundraiserPage = ({ web3 }) => {
             setIsApprover(isApprover);
             
             const count = await instance.methods.getRequestsCount().call();
-            // for(let i=0; i<count; i++) {
-            //     const req = await instance.methods.requests(i).call();
-            //     setRequests(requests => [ ...requests, req]);
-            // }
-
-            // console.log(instance.methods)
 
             const donations = await instance.methods.getDonations().call();
             setDonations(donations);
-            console.log(donations)
           }
         catch(error) {
         alert(
@@ -175,6 +171,10 @@ const FundraiserPage = ({ web3 }) => {
         await instance.methods.approveRequest(index).send({ from: accounts[0] });
     }
 
+    const withdraw = async () => {
+        await instance.methods.withdraw().send({ from: accounts[0] });
+    }
+
     return (
         <Grid container>
             <Grid item xs={12} lg={8} sx={{ marginTop: '5rem', marginBottom: '1rem'}}>
@@ -204,7 +204,7 @@ const FundraiserPage = ({ web3 }) => {
                     </CardContent>
 
                     <CardContent sx={{ maxHeight: '10rem', overflow: 'auto' }}>
-                        {donations && donations.map(donation => {
+                        {donations && donations.length > 0 ? donations.map(donation => {
                             return (
                                 <CardHeader 
                                     avatar={
@@ -212,11 +212,17 @@ const FundraiserPage = ({ web3 }) => {
                                             {donation.name[0].toUpperCase()}
                                         </Avatar>
                                     }
-                                    title= {donation.message}
+                                    title= {donation.message === '' ? 'Donated ' : donation.message}
                                     subheader= {`${web3.utils.fromWei(donation.value, "ether")} eth`}
                                 />
                             )
-                        }) }
+                        }) :
+                        <Box>
+                            <Typography>
+                                No donations yet...
+                            </Typography>
+                        </Box>
+                        }
                     </CardContent>
                     
                     
@@ -241,8 +247,8 @@ const FundraiserPage = ({ web3 }) => {
                             display: 'flex',
                             flexDirection: 'column',
                             width: '100%',
-                            justifyContent: 'space-between',
-                            minHeight: '10rem'
+                            justifyContent: 'space-evenly',
+                            // minHeight: '6rem'
                         }}>
                             {
                                 !isOwner ? 
@@ -255,44 +261,56 @@ const FundraiserPage = ({ web3 }) => {
                                 >
                                     Donate Now
                                 </LoadingButton> : 
-                                <Button
+                                isRequestBased == 'true' ? <Button
                                     fullWidth
                                     variant="contained"
                                     color="primary"
                                     component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
                                 >
                                     Withdraw
+                                </Button> : 
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={withdraw}
+                                >
+                                    Withdraw
                                 </Button>
                             }
-                            <Button
+
+                            {isRequestBased == 'true' && <Button
                                 fullWidth
                                 variant="outlined"
                                 color="primary"
                                 component={Link}
                                 to={`/fundraiser/${params.id}/allrequests`}
+                                sx={{mt: 2}}
                             >
                                 View WithDrawal Requests
-                            </Button>
+                            </Button>}
+
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 justifyContent: 'flex-start',
-                                padding: '0 1rem'
+                                padding: '0 1rem',
+                                mt: 1
                             }}>
                                 <Box sx={{ flexGrow: 1, mt: '5px' }}>
                                     <Typography variant='h6' >Share now</Typography>
                                 </Box>
                                 <IconButton>
-                                    <Box sx={{color: '#076ea8'}} component="a" target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}> <LinkedInIcon /> </Box>
-                                    {/* <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a>  */}
+                                    <Box sx={{color: '#076ea8'}} component="a" target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Fmake-a-difference%2Enetlify%2Eapp%2Ffundraiser%2F${params.id}%2F`}> <LinkedInIcon /> </Box>
+                                    {/* <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Fmake-a-difference%2Enetlify%2Eapp%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a>  */}
                                 </IconButton>
                                 <IconButton>
-                                    {/* <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a>  */}
-                                    <Box sx={{color: '#4267B2'}} component="a" target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}> <FacebookIcon /> </Box>
+                                    {/* <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Fmake-a-difference%2Enetlify%2Eapp%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a>  */}
+                                    <Box sx={{color: '#4267B2'}} component="a" target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Fmake-a-difference%2Enetlify%2Eapp%2Ffundraiser%2F${params.id}%2F`}> <FacebookIcon /> </Box>
                                 </IconButton>
                                 <IconButton>
-                                <Box sx={{color: '#00acee'}} component="a" target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}> <TwitterIcon /> </Box>
-                                    {/* <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a>  */}
+                                <Box sx={{color: '#00acee'}} component="a" target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Fmake-a-difference%2Enetlify%2Eapp%2Ffundraiser%2F${params.id}%2F`}> <TwitterIcon /> </Box>
+                                    {/* <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Fmake-a-difference%2Enetlify%2Eapp%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a>  */}
                                 </IconButton>
                             </Box>
                         </Box>

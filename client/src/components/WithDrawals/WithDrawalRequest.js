@@ -87,7 +87,8 @@ const WithDrawalRequest = ({ web3 }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    marginTop: '25%'
+                    marginTop: '25%',
+                    minHeight: '75vh'
                 }}
             >
                 
