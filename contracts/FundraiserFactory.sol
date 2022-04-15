@@ -14,6 +14,7 @@ contract FundraiserFactory {
     );
 
     function createFundraiser(
+        string memory isRequestBased,
         string memory name,
         string memory imageURL,
         string memory description,
@@ -23,6 +24,7 @@ contract FundraiserFactory {
         address payable beneficiary
     ) public {
         Fundraiser fundraiser = new Fundraiser(
+            isRequestBased,
             name,
             imageURL,
             description,

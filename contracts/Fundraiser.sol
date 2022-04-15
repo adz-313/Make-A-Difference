@@ -33,7 +33,7 @@ contract Fundraiser is Ownable {
     string public description;
     address payable public beneficiary;
     string public category;
-    bool public isRequestBased;
+    string public isRequestBased;
     uint256 public totalDonations;
     uint256 public donationsCount;
     uint256 public minimumContribution;
@@ -46,6 +46,7 @@ contract Fundraiser is Ownable {
     event Withdraw(uint256 amount);
 
     constructor(
+        string memory _isRequestBased,
         string memory _name,
         string memory _imageURL,
         string memory _description,
@@ -62,6 +63,7 @@ contract Fundraiser is Ownable {
         // minimumContribution = _minimumContribution;
         category = _category;
         targetToAchieve = _targetToAchieve;
+        isRequestBased = _isRequestBased;
         transferOwnership(_owner);
     }
 
