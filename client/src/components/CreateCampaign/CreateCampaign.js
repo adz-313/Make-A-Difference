@@ -9,7 +9,6 @@ import BigNumber from "bignumber.js";
 // const cc = require('cryptocompare');
 
 
-
 const CreateCampaign = ({ web3}) => {
 
     const [formData, setFormData] = useState({

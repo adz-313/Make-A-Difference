@@ -11,6 +11,8 @@ import Navbar from './components/Navbar/Navbar';
 import HomePage from './components/HomePage/HomePage';
 import  WithDrawalRequest from './components/WithDrawals/WithDrawalRequest';
 import ViewWithDrawalRequests from './components/WithDrawals/ViewWithDrawalRequests';
+import SignIn from './components/SignIn/SignIn';
+import SignUp from './components/SignUp/SignUp';
 
 const App = () => {
   const [ web3, setWeb3 ] = useState(null);
@@ -55,4 +57,4 @@ const App = () => {
   )
 }
 
-export default App
+export default App 
