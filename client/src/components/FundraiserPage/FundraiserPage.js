@@ -369,13 +369,13 @@ const FundraiserPage = ({ web3 }) => {
                                     color="primary"
                                 >See All Donations</Button>
                             </div> */}
-                            
+                           </Box> 
                         </CardActions>
                         
                     </Card>
                 </Grid>
             </Grid>
-        </Container>
+        // </Container>
     // <div>
     //         <Grid container direction="row" marginTop="1rem">
     //             <Grid item sx={{padding: 2}} md={6} lg={8}>
