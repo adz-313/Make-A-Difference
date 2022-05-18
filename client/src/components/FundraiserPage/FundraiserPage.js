@@ -250,7 +250,7 @@ const FundraiserPage = ({ web3 }) => {
                             flexDirection: 'column',
                             width: '100%',
                             justifyContent: 'space-evenly',
-                            // minHeight: '6rem'
+                            minHeight: '6rem'
                         }}>
                             {
                                 !isOwner ? 
@@ -263,7 +263,7 @@ const FundraiserPage = ({ web3 }) => {
                                 >
                                     Donate Now
                                 </LoadingButton> : 
-                                isRequestBased == 'true' ? <Button
+                                (isRequestBased == 'true' ? <Button
                                     fullWidth
                                     variant="contained"
                                     color="primary"
@@ -278,7 +278,7 @@ const FundraiserPage = ({ web3 }) => {
                                     onClick={withdraw}
                                 >
                                     Withdraw
-                                </Button>
+                                </Button>)
                             }
 
                             {isRequestBased == 'true' && <Button
@@ -299,54 +299,8 @@ const FundraiserPage = ({ web3 }) => {
                                 padding: '0 1rem',
                                 mt: 1
                             }}>
-                                {
-                                    !isOwner ? 
-                                    <LoadingButton
-                                        fullWidth
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => donate()}
-                                        loading={loading}
-                                    >
-                                        Donate Now
-                                    </LoadingButton> : 
-                                    <Button
-                                        fullWidth
-                                        variant="contained"
-                                        color="primary"
-                                        component={Link} to={`/fundraiser/${params.id}/withdrawal/new`}
-                                    >
-                                        Withdraw
-                                    </Button>
-                                }
-                                <Button
-                                    fullWidth
-                                    variant="outlined"
-                                    color="primary"
-                                    component={Link}
-                                    to={`/fundraiser/${params.id}/allrequests`}
-                                >
-                                    View WithDrawal Requests
-                                </Button>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-start',
-                                    padding: '0 1rem'
-                                }}>
-                                    <Box sx={{ flexGrow: 1, mt: '5px' }}>
-                                        <Typography variant='h6' >Share now</Typography>
-                                    </Box>
-                                    <IconButton>
-                                        <a target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><LinkedInIcon /></a> 
-                                    </IconButton>
-                                    <IconButton>
-                                    <a target='_blank' href={`https://www.facebook.com/sharer.php?u=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><FacebookIcon /></a> 
-                                        
-                                    </IconButton>
-                                    <IconButton>
-                                    <a target='_blank' href={`https://twitter.com/intent/tweet?url=http%3A%2F%2Flocalhost:3000%2Ffundraiser%2F${params.id}%2F`}><TwitterIcon /></a> 
-                                    </IconButton>
+                                <Box sx={{ flexGrow: 1, mt: '5px' }}>
+                                    <Typography variant='h6' >Share now</Typography>
                                 </Box>
                                 <IconButton>
                                     <Box sx={{color: '#076ea8'}} component="a" target='_blank' href={`https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Fmake-a-difference%2Enetlify%2Eapp%2Ffundraiser%2F${params.id}%2F`}> <LinkedInIcon /> </Box>
@@ -369,7 +323,7 @@ const FundraiserPage = ({ web3 }) => {
                                     color="primary"
                                 >See All Donations</Button>
                             </div> */}
-                           </Box> 
+                        </Box> 
                         </CardActions>
                         
                     </Card>
