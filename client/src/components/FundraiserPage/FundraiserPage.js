@@ -10,6 +10,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { recordTransaction } from '../../api/index';
 import DonationModal from './Modal/DonationModal';
+import PersonIcon from '@mui/icons-material/Person';
 // const cc = require('cryptocompare');
 
 
@@ -211,11 +212,11 @@ const FundraiserPage = ({ web3 }) => {
                                 <CardHeader 
                                     avatar={
                                         <Avatar sx={{ bgcolor: '#555' }} aria-label="user">
-                                            {donation.name[0].toUpperCase()}
+                                            <PersonIcon />
                                         </Avatar>
                                     }
                                     title= {donation.message === '' ? 'Donated ' : donation.message}
-                                    subheader= {`${web3.utils.fromWei(donation.value, "ether")} eth`}
+                                    subheader= {`${web3.utils.fromWei(donation.value, "ether") * exchangeRate[currency]}  ${currency}`}
                                 />
                             )
                         }) :

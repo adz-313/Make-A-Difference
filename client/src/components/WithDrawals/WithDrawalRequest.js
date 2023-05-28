@@ -16,7 +16,10 @@ const WithDrawalRequest = ({ web3 }) => {
     const [requests, setRequests] = useState(false);
     const [currency, setCurrency] = useState("INR");
     const [beneficiary, setBeneficiary] = useState(null);
-    const [exchangeRate, setExchangeRate ] = useState(null);
+    const [exchangeRate, setExchangeRate ] = useState({
+        'INR': 211822.19,
+        'USD': 2572.38
+    });
     const [request, setRequest] = useState({
         description: '',
         value: '',
@@ -35,7 +38,7 @@ const WithDrawalRequest = ({ web3 }) => {
 
             setInstance(instance);
             setAccounts(accounts);
-            setExchangeRate(exchangeRate);
+            // setExchangeRate(exchangeRate);
             setBeneficiary(beneficiary);
 
             const isOwner = await instance.methods.owner().call();
